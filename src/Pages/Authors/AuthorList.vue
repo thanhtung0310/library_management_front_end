@@ -38,7 +38,7 @@ import axios from "axios";
   },
 })
 export default class BookList extends Vue {
-  URL = "https://localhost:7123/api/books";
+  URL = "https://localhost:7123/api/authors";
   getData(): void {
     axios
       .get(this.URL)

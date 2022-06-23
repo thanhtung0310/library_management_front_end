@@ -6,11 +6,11 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import BookList from '@/Pages/Books/BookList.vue'; // @ is an alias to /src
+import { Options, Vue } from "vue-class-component";
+import BookList from "@/Pages/Books/BookList.vue"; // @ is an alias to /src
 
 @Options({
-  name: 'BookView',
+  name: "BookView",
   components: {
     BookList,
   },

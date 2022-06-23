@@ -18,7 +18,29 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/books',
     name: 'books',
-    component: () => import('@/views/BooksView.vue')
+    component: () => import('@/views/BooksView.vue'),
+    children: [
+      {
+        path: 'book_list',
+        name: 'book_list',
+        component: () => import('@/Pages/Books/BookList.vue'),
+      },
+      {
+        path: 'book_insert',
+        name: 'book_insert',
+        component: () => import('@/Pages/Books/BookInsert.vue'),
+      },
+      {
+        path: 'book_update',
+        name: 'book_update',
+        component: () => import('@/Pages/Books/BookUpdate.vue'),
+      },
+      {
+        path: 'book_delete',
+        name: 'book_delete',
+        component: () => import('@/Pages/Books/BookDelete.vue'),
+      },
+    ]
   },
   {
     path: '/authors',

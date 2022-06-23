@@ -20,6 +20,36 @@
   </div>
 </template>
 
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
+  name: "TheHeader",
+  methods: {
+    navSlide(): void {
+      let burger = document.querySelector(".burger");
+      let nav = document.querySelector(".nav-links");
+
+      let isActive = false;
+      console.log("nav-active: " + isActive);
+
+      burger?.addEventListener("click", () => {
+        // Toggle nav
+        nav?.classList.toggle("nav-active");
+
+        // Toggle nav active status to true/false
+        isActive = !isActive;
+        console.log("nav-active: " + isActive);
+      });
+    },
+  },
+  mounted() {
+    this.navSlide();
+  },
+});
+</script>
+
+
 <style>
 .header {
   display: flex;
@@ -76,60 +106,54 @@
 }
 
 @media screen and (max-width: 1024px) {
-  nav-links{
-      width: 60%;
+  body {
+    overflow-x: hidden;
   }
-  
-}
-
-@media screen and (max-width: 768px) {
-  body{
-      overflow-x: hidden;
+  .nav-links {
+    position: absolute;
+    right: 0px;
+    height: 92vh;
+    top: 8vh;
+    background-color: #5d4954;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%;
+    transform: translateX(100%);
+    transition: transform 0.5s ease-in;
+    padding-left: 10px;
   }
-  .nav-links{
-      position: absolute;
-      right: 0px;
-      height: 92vh;
-      top: 8vh;
-      background-color: #5d4954;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 50%;
-      transform: translateX(100%);
-      transition: transform 0.5s ease-in;
-  }
-  .nav-links li{
-      opacity: 0;
+  .nav-links li {
+    opacity: 0;
   }
   .burger {
-      display: block;
+    display: block;
   }
 }
 
-.nav-active{
+.nav-active {
   transform: translateX(0%);
 }
 
-@keyframes navLinkFadeIn{
-  from{
-      opacity: 0;
-      transform: translateX(50px);
+@keyframes navLinkFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
   }
-  to{
-      opacity: 1;
-      transform: translateX(0px);
+  to {
+    opacity: 1;
+    transform: translateX(0px);
   }
 }
 
-@keyframes navLinkFadeOut{
-  from{
-      opacity: 1;
-      transform: translateX(0px);
+@keyframes navLinkFadeOut {
+  from {
+    opacity: 1;
+    transform: translateX(0px);
   }
-  to{
-      opacity: 0;
-      transform: translateX(50px);
+  to {
+    opacity: 0;
+    transform: translateX(50px);
   }
 }
 

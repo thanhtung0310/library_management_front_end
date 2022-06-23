@@ -31,21 +31,22 @@ import axios from "axios";
   data() {
     return {
       data: null,
+      URL: "https://localhost:7123/api/books",
     };
+  },
+  methods: {
+    getData(): void {
+      axios
+        .get(this.URL)
+        .then((response) => (this.data = response.data))
+        .catch((error) => console.log(error));
+    },
   },
   mounted() {
     this.getData();
   },
 })
-export default class BookList extends Vue {
-  URL = "https://localhost:7123/api/books";
-  getData(): void {
-    axios
-      .get(this.URL)
-      .then((response) => (this.data = response.data))
-      .catch((error) => console.log(error));
-  }
-}
+export default class BookList extends Vue {}
 </script>
 
 <style>
