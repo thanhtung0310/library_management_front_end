@@ -2,22 +2,21 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <p>
-      Here is the front-end of Lbrary Management demo project (using .NET 6 as BE Project and VueJS+TS as FE Project)
+      Here is the front-end of Lbrary Management demo project (using .NET 6 as
+      BE Project and VueJS+TS as FE Project)
     </p>
   </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { defineComponent } from "vue";
 
-@Options({
+export default defineComponent({
+  name: "HelloWorld",
   props: {
-    msg: String
-  }
-})
-export default class HelloWorld extends Vue {
-  msg!: string
-}
+    msg: String,
+  },
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

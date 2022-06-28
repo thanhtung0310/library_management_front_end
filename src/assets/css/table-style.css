@@ -1,0 +1,33 @@
+.table {
+  text-align: center;
+  border: double;
+  background-color: white;
+  width: 60%;
+  margin: 0 auto;
+}
+
+.table-view {
+  margin-top: 20px;
+}
+
+div#update-div, div#insert-div {
+  padding: 10px;
+}
+
+div#update-div {
+  display: block;
+}
+
+#btnInsertPage {
+  margin-bottom: 20px;
+}
+
+button#btnInsertPage {
+  width: 150px;
+  height: 25px;
+  font-size: medium;
+}
+
+.icon {
+  cursor: pointer;
+}

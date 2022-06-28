@@ -1,61 +1,91 @@
 <template>
-  <div>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Book ID</th>
-          <th>Book title</th>
-          <th>Book's publisher</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(book, index) in data" :key="index">
-          <td v-text="book.book_BookID"></td>
-          <td v-text="book.book_Title"></td>
-          <td v-text="book.book_PublisherID"></td>
-        </tr>
-      </tbody>
-    </table>
+  <div v-if="show" class="insert-box">
+    <div class="box-header">
+      <p>Create new book</p>
+    </div>
+    <div class="form">
+      <div class="form-group databox">
+        <label>Book title: </label>
+        <input
+          v-model="input.book_Title"
+          type="text"
+          name="book_title"
+          id="book_title"
+          placeholder="Please enter book title..."
+        />
+      </div>
+      <div class="form-group databox">
+        <label>Publisher ID: </label>
+        <select
+          v-model="input.book_PublisherID"
+          name="publisher_id"
+          id="publisher_id"
+        >
+          <option value="">Select publisher</option>
+          <option value="1">Alfred A. Knopf</option>
+          <option value="2">Justin Bieber</option>
+          <option value="3">The Rock</option>
+          <option value="4">J. K. Rowling</option>
+        </select>
+      </div>
+      <div class="form-group button">
+        <input
+          type="button"
+          name="btnCreate"
+          id="btnCreate"
+          value="CREATE"
+          @click="$emit('close'), createBook()"
+        />
+      </div>
+      <div class="publisher-create">
+        <router-link to="/publisher_insert"
+          >Click here to create new publisher</router-link
+        >
+      </div>
+    </div>
   </div>
-  <!-- <div class="info">
-    {{ data }}
-  </div> -->
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import { defineComponent } from "vue";
 import axios from "axios";
 
-@Options({
-  name: "BookList",
+export default defineComponent({
+  name: "book_insert",
   data() {
     return {
+      baseURL: "https://localhost:7123/api/books/",
       data: null,
-      URL: "https://localhost:7123/api/books",
+      book_title: null,
+      publisher_id: null,
+      publisher_title: null,
+      input: { book_Title: null, book_PublisherID: null },
     };
   },
+  props: {
+    show: Boolean,
+  },
   methods: {
-    getData(): void {
+    createBook(): void {
       axios
-        .get(this.URL)
-        .then((response) => (this.data = response.data))
-        .catch((error) => console.log(error));
+        .post(this.baseURL, this.input)
+        .then((response) => {
+          this.data = response.data;
+          alert("Book is created successfully!");
+          this.clearData();
+        })
+        .catch((error) => {
+          console.log(error);
+          this.clearData();
+        });
+    },
+    clearData(): void {
+      this.input.book_Title = null;
+      this.input.book_PublisherID = null;
     },
   },
-  mounted() {
-    this.getData();
-  },
-})
-export default class BookList extends Vue {}
+});
 </script>
 
-<style>
-.table {
-  text-align: center;
-  border: double;
-  background-color: white;
-  width: 80%;
-  margin-left: 10%;
-  align-self: center;
-}
-</style>
+
+<style src="@/assets/css/insert-style.css" scoped></style>
