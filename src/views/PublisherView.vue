@@ -1,6 +1,24 @@
 <template>
   <div class="publishers">
     <h1>PUBLISHER LIST</h1>
+    <div class="insert-div" id="insert-div">
+      <button
+        id="btnInsertPage"
+        @click="goToInsertPage(), (showModal = !showModal)"
+      >
+        Create new publisher
+      </button>
+      <router-view :show="showModal" @close="showModal = false"></router-view>
+    </div>
+
+    <div class="update-div" id="update-div">
+      <Update
+        :publisherID="output.publisher_PublisherID"
+        :publisherName="output.publisher_PublisherName"
+        :publisherAddr="output.publisher_PublisherAddress"
+        :publisherNo="output.publisher_PublisherPhone"
+      ></Update>
+    </div>
 
     <table class="table">
       <thead>
@@ -13,14 +31,14 @@
       </thead>
       <tbody>
         <tr v-for="(row, index) in data" :key="index">
-          <td v-text="row.publisher_PublisherID"></td>
-          <td v-text="row.publisher_PublisherName"></td>
-          <td v-text="row.publisher_PublisherAddress"></td>
-          <td v-text="row.publisher_PublisherPhone"></td>
-          <td>
+          <td>{{ row.publisher_PublisherID }}</td>
+          <td>{{ row.publisher_PublisherName }}</td>
+          <td>{{ row.publisher_PublisherAddress }}</td>
+          <td>{{ row.publisher_PublisherPhone }}</td>
+          <td @click="passDatatoUpdatePage(row)">
             <font-awesome-icon class="icon" icon="fa-solid fa-circle-info" />
           </td>
-          <td>
+          <td @click="passDatatoDeletePage(row)">
             <font-awesome-icon class="icon" icon="fa-solid fa-ban" />
           </td>
         </tr>
@@ -32,27 +50,72 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
+import Update from "@/pages/Publishers/PublisherUpdate.vue";
 
 export default defineComponent({
   name: "PublisherView",
-  component: {},
+  components: {
+    Update,
+  },
   data() {
     return {
+      baseURL: "https://localhost:7123/api/publishers/",
       data: null,
-      URL: "https://localhost:7123/api/publishers/",
+      output: {
+        publisher_PublisherID: Number,
+        publisher_PublisherName: String,
+        publisher_PublisherAddress: String,
+        publisher_PublisherPhone: String,
+      },
       showModal: false,
     };
   },
   methods: {
-    getData(): void {
+    goToInsertPage() {
+      this.$router.push("/publisher_insert");
+    },
+    getDataFromApi(): void {
       axios
-        .get(this.URL)
-        .then((response) => (this.data = response.data))
+        .get(this.baseURL)
+        .then((response) => {
+          this.data = response.data;
+        })
         .catch((error) => console.log(error));
+    },
+    passDatatoUpdatePage(model: undefined): void {
+      // parse dữ liệu sang dạng JSON
+      const modelParse = JSON.parse(JSON.stringify(model));
+      this.output = modelParse;
+
+      // display updateDiv mỗi khi ấn nút details (default: display=none)
+      const updateDiv = document.getElementById("update-div");
+      if (updateDiv != null) {
+        if (updateDiv.style.display == "none")
+          updateDiv.style.display = "block";
+        else if (updateDiv.style.display == "block")
+          updateDiv.style.display = "block";
+        else updateDiv.style.display = "none";
+      }
+    },
+    passDatatoDeletePage(model: undefined): void {
+      // parse dữ liệu sang dạng JSON
+      const modelParse = JSON.parse(JSON.stringify(model));
+      this.output = modelParse;
+
+      // gọi API delete
+      axios
+        .delete(this.baseURL + this.output.publisher_PublisherID)
+        .then((response) => {
+          this.data = response.data;
+          // alert("Success delete book with id = " + this.output.book_BookID);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
   mounted() {
-    this.getData();
+    this.getDataFromApi();
   },
 });
 </script>

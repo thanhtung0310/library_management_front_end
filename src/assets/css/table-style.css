@@ -15,16 +15,13 @@ div#update-div, div#insert-div {
 }
 
 div#update-div {
-  display: block;
-}
-
-#btnInsertPage {
-  margin-bottom: 20px;
+  display: none;
 }
 
 button#btnInsertPage {
-  width: 150px;
+  width: 200px;
   height: 25px;
+  margin-bottom: 20px;
   font-size: medium;
 }
 

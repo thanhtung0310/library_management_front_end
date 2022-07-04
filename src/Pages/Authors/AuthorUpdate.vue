@@ -1,27 +1,27 @@
 <template>
   <div class="update-box">
     <div class="box-header">
-      <p>Update book with id {{ bookID }}</p>
+      <p>Update author with id {{ authorID }}</p>
     </div>
     <div class="form">
       <div class="form-group databox">
-        <label>Book title: </label>
+        <label>Book ID: </label>
         <input
-          :value="bookTitle"
+          :value="bookID"
           type="text"
-          name="book_title"
-          id="book_title"
-          placeholder="Please update book title..."
+          name="book_id"
+          id="book_id"
+          placeholder="Please update book id..."
         />
       </div>
       <div class="form-group databox">
-        <label>Publisher ID: </label>
+        <label>Author name: </label>
         <input
-          :value="publisherID"
+          :value="authorName"
           type="text"
-          name="publisher_id"
-          id="publisher_id"
-          placeholder="Please update publisher ID..."
+          name="author_name"
+          id="author_name"
+          placeholder="Please update author name..."
         />
       </div>
       <div class="form-group button">
@@ -42,28 +42,28 @@ import { defineComponent } from "vue";
 import axios from "axios";
 
 export default defineComponent({
-  name: "book_update",
+  name: "author_update",
   data() {
     return {
-      baseURL: "https://localhost:7123/api/books/",
+      baseURL: "https://localhost:7123/api/authors/",
       input: {
-        book_Title: this.bookTitle,
-        book_PublisherID: this.publisherID,
+        book_authors_BookID: this.bookID,
+        book_authors_AuthorName: this.authorName,
       },
     };
   },
   props: {
+    authorID: {
+      default: 0,
+      type: Number,
+    },
     bookID: {
-      type: Number,
       default: 0,
+      type: Number,
     },
-    bookTitle: {
-      type: String,
+    authorName: {
       default: "",
-    },
-    publisherID: {
-      type: Number,
-      default: 0,
+      type: String,
     },
   },
   methods: {
@@ -73,9 +73,9 @@ export default defineComponent({
 
       // gọi API update
       axios
-        .put(this.baseURL + this.bookID, modelParse)
+        .put(this.baseURL + this.authorID, modelParse)
         .then(() => {
-          alert("Success update book with id = " + this.bookID);
+          alert("Success update author with id = " + this.authorID);
         })
         .catch((error) => {
           console.log(error);

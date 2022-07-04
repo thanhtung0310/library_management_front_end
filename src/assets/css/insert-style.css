@@ -19,7 +19,7 @@
   flex-wrap: wrap;
 }
 
-input#book_title, select#publisher_id {
+input[type=text], select#publisher_id {
   margin-left: 20px;
   min-width: 50%;
   width: 60%;

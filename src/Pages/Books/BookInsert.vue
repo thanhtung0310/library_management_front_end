@@ -56,10 +56,10 @@ export default defineComponent({
     return {
       baseURL: "https://localhost:7123/api/books/",
       data: null,
-      book_title: null,
-      publisher_id: null,
-      publisher_title: null,
-      input: { book_Title: null, book_PublisherID: null },
+      input: {
+        book_Title: null,
+        book_PublisherID: null,
+      },
     };
   },
   props: {

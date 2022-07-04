@@ -9,10 +9,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/about',
     name: 'AboutView',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '@/views/AboutView.vue')
+    component: () => import('@/views/AboutView.vue')
   },
   {
     path: '/books',
@@ -20,44 +17,87 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/BookView.vue'),
     children: [
       {
-        path: '/book_insert',
+        path: '/books/insert',
         name: 'book_insert',
         component: () => import('@/pages/Books/BookInsert.vue'),
       },
       {
-        path: '/book_update',
+        path: '/books/update',
         name: 'book_update',
         component: () => import('@/pages/Books/BookUpdate.vue'),
-      },
-      {
-        path: '/book_delete',
-        name: 'book_delete',
-        component: () => import('@/pages/Books/BookDelete.vue'),
       },
     ]
   },
   {
     path: '/authors',
     name: 'AuthorView',
-    component: () => import('@/views/AuthorView.vue')
+    component: () => import('@/views/AuthorView.vue'),
+    children: [
+      {
+        path: '/author_insert',
+        name: 'author_insert',
+        component: () => import('@/pages/Authors/AuthorInsert.vue'),
+      },
+      {
+        path: '/author_update',
+        name: 'author_update',
+        component: () => import('@/pages/Authors/AuthorUpdate.vue'),
+      },
+    ]
   },
   {
     path: '/loans',
     name: 'LoanView',
-    component: () => import('@/views/LoanView.vue')
+    component: () => import('@/views/LoanView.vue'),
+    children: [
+      {
+        path: '/loan_insert',
+        name: 'loan_insert',
+        component: () => import('@/pages/Loans/LoanInsert.vue'),
+      },
+      {
+        path: '/loan_update',
+        name: 'loan_update',
+        component: () => import('@/pages/Loans/LoanUpdate.vue'),
+      },
+    ]
   },
   {
     path: '/publishers',
     name: 'PublisherView',
-    component: () => import('@/views/PublisherView.vue')
+    component: () => import('@/views/PublisherView.vue'),
+    children: [
+      {
+        path: '/publisher_insert',
+        name: 'publisher_insert',
+        component: () => import('@/pages/Publishers/PublisherInsert.vue'),
+      },
+      {
+        path: '/publisher_update',
+        name: 'publisher_update',
+        component: () => import('@/pages/Publishers/PublisherUpdate.vue'),
+      },
+    ]
   },
   {
     path: '/borrowers',
     name: 'BorrowerView',
-    component: () => import('@/views/BorrowerView.vue')
+    component: () => import('@/views/BorrowerView.vue'),
+    children: [
+      {
+        path: '/borrower_insert',
+        name: 'borrower_insert',
+        component: () => import('@/pages/Borrowers/BorrowerInsert.vue'),
+      },
+      {
+        path: '/borrower_update',
+        name: 'borrower_update',
+        component: () => import('@/pages/Borrowers/BorrowerUpdate.vue'),
+      },
+    ]
   },
   {
-    path: '/:catchAll(.*)*',
+    path: '/:catchAll(.*)',
     name: "PageNotFound",
     component: () => import('@/components/PageNotFound.vue')
   },

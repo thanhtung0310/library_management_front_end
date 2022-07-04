@@ -13,10 +13,9 @@
 
     <div class="update-div" id="update-div">
       <Update
-        :data="output"
-        :book_BookID="output.book_BookID"
-        :book_Title="output.book_Title"
-        :book_PublisherID="output.book_PublisherID"
+        :bookID="output.book_BookID"
+        :bookTitle="output.book_Title"
+        :publisherID="output.book_PublisherID"
       ></Update>
     </div>
 
@@ -37,7 +36,7 @@
             <td @click="passDatatoUpdatePage(row)">
               <font-awesome-icon class="icon" icon="fa-solid fa-circle-info" />
             </td>
-            <td @click="passDatatoDeletePage(row)">
+            <td @click="deleteData(row)">
               <font-awesome-icon class="icon" icon="fa-solid fa-ban" />
             </td>
           </tr>
@@ -71,7 +70,7 @@ export default defineComponent({
   },
   methods: {
     goToInsertPage() {
-      this.$router.push("/book_insert");
+      this.$router.push("/books/insert");
     },
     getDataFromApi(): void {
       axios
@@ -87,16 +86,16 @@ export default defineComponent({
       this.output = modelParse;
 
       // display updateDiv mỗi khi ấn nút details (default: display=none)
-      debugger;
-      let updateDiv = document.getElementById("#update-div");
-      //updateDiv = "block";
-      if (updateDiv?.style.display == "none") {
-        updateDiv.style.display = "block";
-      } else {
-        updateDiv?.style.display == "none";
+      const updateDiv = document.getElementById("update-div");
+      if (updateDiv != null) {
+        if (updateDiv.style.display == "none")
+          updateDiv.style.display = "block";
+        else if (updateDiv.style.display == "block")
+          updateDiv.style.display = "block";
+        else updateDiv.style.display = "none";
       }
     },
-    passDatatoDeletePage(model: undefined): void {
+    deleteData(model: undefined): void {
       // parse dữ liệu sang dạng JSON
       const modelParse = JSON.parse(JSON.stringify(model));
       this.output = modelParse;
@@ -106,14 +105,14 @@ export default defineComponent({
         .delete(this.baseURL + this.output.book_BookID)
         .then((response) => {
           this.data = response.data;
-          // alert("Success delete book with id = " + this.output.book_BookID);
+          alert("Success delete book with id = " + this.output.book_BookID);
         })
         .catch((error) => {
           console.log(error);
         });
     },
   },
-  mounted() {
+  created() {
     this.getDataFromApi();
   },
 });
