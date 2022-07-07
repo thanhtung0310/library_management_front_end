@@ -1,0 +1,49 @@
+.footer {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  text-align: top;
+}
+
+.left-content, .mid-content, .right-content {
+  line-height: 18px;
+}
+
+.footer .left-content .logo {
+  font-size: 14px;
+}
+
+.footer .left-content .logo a{
+  color: darkgray;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Social icon Model */
+
+.social-circle a {
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  font-size: 16px;
+  line-height: 40px;
+  text-align: center;
+  color: #ffffff;
+  border: 1px solid #5A4D48;
+  border-radius: 50%;
+  -webkit-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+  margin-right: 7px;
+}
+
+.social-circle a:hover {
+  background: inherit;
+  border-color: inherit;
+}
+
+/*  */

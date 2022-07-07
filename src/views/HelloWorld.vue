@@ -1,9 +1,8 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <h1>{{ $t("welcome_header") }}</h1>
     <p>
-      Here is the front-end of Lbrary Management demo project (using .NET 6 as
-      BE Project and VueJS+TS as FE Project)
+      {{ $t("welcome_message") }}
     </p>
   </div>
 </template>
@@ -13,9 +12,6 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "HelloWorld",
-  props: {
-    msg: String,
-  },
 });
 </script>
 

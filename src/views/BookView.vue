@@ -1,12 +1,12 @@
 <template>
   <div class="books">
-    <h1>BOOK LIST</h1>
+    <h1>{{ $t("books.view_header") }}</h1>
     <div class="insert-div" id="insert-div">
       <button
         id="btnInsertPage"
         @click="goToInsertPage(), (showModal = !showModal)"
       >
-        Create new book
+        {{ $t("books.create_btn") }}
       </button>
       <router-view :show="showModal" @close="showModal = false"></router-view>
     </div>
@@ -23,16 +23,20 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Book ID</th>
-            <th>Book title</th>
-            <th>Book's publisher</th>
+            <th>{{ $t("books.book_id") }}</th>
+            <th>{{ $t("books.book_title") }}</th>
+            <th>{{ $t("authors.author_name") }}</th>
+            <th>{{ $t("publishers.publisher_name") }}</th>
+            <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(row, index) in data" :key="index">
-            <td>{{ row.book_BookID }}</td>
-            <td>{{ row.book_Title }}</td>
-            <td>{{ row.book_PublisherID }}</td>
+            <td>{{ row.book_id }}</td>
+            <td>{{ row.book_title }}</td>
+            <td>{{ row.author_name }}</td>
+            <td>{{ row.publisher_name }}</td>
             <td @click="passDatatoUpdatePage(row)">
               <font-awesome-icon class="icon" icon="fa-solid fa-circle-info" />
             </td>
@@ -58,7 +62,8 @@ export default defineComponent({
   },
   data() {
     return {
-      baseURL: "https://localhost:7123/api/books/",
+      // baseURL: "https://localhost:7123/api/books/",
+      baseURL: "https://localhost:7123/Get/book_list",
       data: null,
       output: {
         book_BookID: Number,
@@ -76,7 +81,7 @@ export default defineComponent({
       axios
         .get(this.baseURL)
         .then((response) => {
-          this.data = response.data;
+          this.data = response.data.data;
         })
         .catch((error) => console.log(error));
     },

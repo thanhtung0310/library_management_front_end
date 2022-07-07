@@ -1,0 +1,69 @@
+{
+  "message": "bonjour i18n !!",
+  "project_name": "Gestion de la Bibliothèque",
+  "welcome_header": "Bienvenue dans mon projet",
+  "welcome_message": "Voici le front-end du projet de démonstration Gestion de la Bibliothèque (utilisant .NET 6 comme projet BE et VueJS+TS comme projet FE)",
+  "nav": {
+    "home": "Domicile",
+    "books": "Livres",
+    "authors": "Auteurs",
+    "publishers": "Éditeurs",
+    "borrowers": "Emprunteurs",
+    "loans": "Prêts",
+    "about": "Sur"
+  },
+  "footer": {
+    "message": "This is my project"
+  },
+  "authors": {
+    "view_header": "LISTE DES AUTEURS",
+    "create_btn": "Créer un nouvel auteur",
+    "author_id": "Identifiant de l'auteur",
+    "book_id": "Identifiant du livre",
+    "author_name": "Nom de l'auteur"
+  },
+  "books": {
+    "view_header": "LISTE DE LIVRES",
+    "create_btn": "Créer un nouveau livre",
+    "book_id": "Identifiant du livre",
+    "book_title": "Titre de livre",
+    "publisher_id": "Éditeur du livre"
+  },
+  "branch": {
+    "branch_id": "ID de la succursale",
+    "branch_name": "Nom de la succursale",
+    "branch_address": "Adresse de la succursale"
+  },
+  "borrowers" : {  
+    "borrower_id": "ID de l'emprunteur",
+    "borrower_name": "Nom de l'emprunteur",
+    "borrower_address": "Adresse de l'emprunteur",
+    "borrower_contact_number": "Numéro de contact de l'emprunteur"
+  },
+  "copies": {
+    "copies_id": "ID de copies",
+    "book_id": "Identifiant du livre",
+    "branch_id": "ID de la succursale",
+    "total_copies_number": "Nombre total de copies",
+    "avail_copies_number": "Nombre total d'exemplaires disponibles"
+  },
+  "loans" : {
+    "loan_id": "ID de prêt",
+    "book_id": "Identifiant du livre",
+    "branch_id": "ID de la succursale",
+    "borrower_id": "ID de l'emprunteur",
+    "loan_date": "Date de prêt",
+    "due_date": "Date d'échéance",
+    "loan_status": "Statut de la commande de prêt"
+  },
+  "publishers" : {  
+    "publisher_id": "Identifiant de l'éditeur",
+    "publisher_name": "Nom de l'éditeur",
+    "publisher_address": "Adresse de l'éditeur",
+    "publisher_contact_number": "Numéro de contact de l'éditeur"
+  },
+  "about": {
+    "header": "Ceci est une page à propos",
+    "message": "Informations sur moi-même..."
+  }
+}

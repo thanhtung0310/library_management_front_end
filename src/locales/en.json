@@ -1,0 +1,86 @@
+{
+  "message": "hello i18n !!",
+  "project_name": "Library Management",
+  "welcome_header": "Welcome to my project",
+  "welcome_message": "Here is the front-end of Library Management demo project (using .NET 6 as BE Project and VueJS+TS as FE Project)",
+  "nav": {
+    "home": "Home",
+    "books": "Books",
+    "authors": "Authors",
+    "publishers": "Publishers",
+    "borrowers": "Borrowers",
+    "loans": "Loans",
+    "about": "About",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Rules"
+  },
+  "footer": {
+    "footer_message": "This is my project",
+    "my_info": {
+      "header": "My basic information",
+      "name": "PHAN THANH TUNG",
+      "num": "098 327 5380",
+      "email": "thanhtung031099{'@'}gmail.com",
+      "addr": "5fl, 18 Ton That Thuyet str, Hanoi, Vietnam"
+    },
+    "quick_links": "QUICK LINKS",
+    "contact_us": "CONTACT US"
+  },
+  "authors": {
+    "view_header": "AUTHOR LIST",
+    "create_btn": "Create new author",
+    "author_id": "Author ID",
+    "book_id": "Book ID",
+    "author_name": "Author name"
+  },
+  "books": {
+    "view_header": "BOOK LIST",
+    "create_btn": "Create new book",
+    "book_id": "Book ID",
+    "book_title": "Book title",
+    "publisher_id": "Publisher ID"
+  },
+  "branch": {
+    "branch_id": "Branch ID",
+    "branch_name": "Branch name",
+    "branch_address": "Branch address"
+  },
+  "borrowers" : { 
+    "view_header": "BORROWER LIST",
+    "create_btn": "Create new borrower", 
+    "borrower_id": "Borrower ID",
+    "borrower_name": "Borrower name",
+    "borrower_address": "Borrower address",
+    "borrower_contact_number": "Borrower contact number"
+  },
+  "copies": {
+    "copies_id": "Copies ID",
+    "book_id": "Book ID",
+    "branch_id": "Branch ID",
+    "total_copies_number": "Total number of copies",
+    "avail_copies_number": "Total number of availble copies"
+  },
+  "loans" : {
+    "view_header": "LOAN ORDER LIST",
+    "create_btn": "Create new order",
+    "loan_id": "Loan ID",
+    "book_id": "Book ID",
+    "branch_id": "Branch ID",
+    "borrower_id": "Borrower ID",
+    "loan_date": "Loan date",
+    "due_date": "Due date",
+    "loan_status": "Loan order status"
+  },
+  "publishers" : {  
+    "view_header": "PUBLISHER LIST",
+    "create_btn": "Create new publisher",
+    "publisher_id": "Publisher ID",
+    "publisher_name": "Publisher name",
+    "publisher_address": "Publisher address",
+    "publisher_contact_number": "Publisher contact number"
+  },
+  "about": {
+    "header": "This is an about page",
+    "message": "Information about myself..."
+  }
+}

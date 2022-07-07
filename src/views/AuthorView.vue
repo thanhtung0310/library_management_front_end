@@ -1,12 +1,12 @@
 <template>
   <div class="authors">
-    <h1>AUTHOR LIST</h1>
+    <h1>{{ $t("authors.view_header") }}</h1>
     <div class="insert-div" id="insert-div">
       <button
         id="btnInsertPage"
         @click="goToInsertPage(), (showModal = !showModal)"
       >
-        Create new author
+        {{ $t("authors.create_btn") }}
       </button>
       <router-view :show="showModal" @close="showModal = false"></router-view>
     </div>
@@ -23,9 +23,9 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Author ID</th>
-            <th>Book ID</th>
-            <th>Author name</th>
+            <th>{{ $t("authors.author_id") }}</th>
+            <th>{{ $t("authors.book_id") }}</th>
+            <th>{{ $t("authors.author_name") }}</th>
           </tr>
         </thead>
         <tbody>

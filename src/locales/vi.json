@@ -1,0 +1,15 @@
+{
+  "message": "xin chào i18n !!",
+  "project_name": "Quản lý thư viện",
+  "welcome_header": "Chào mừng bạn đến với dự án của tôi",
+  "welcome_message": "Đây là giao diện của dự án demo Quản lý thư viện (sử dụng BE là .NET 6 và FE là Vue+TS)",
+  "nav": {
+    "home": "Trang chính",
+    "books": "Truyện",
+    "authors": "Tác giả",
+    "publishers": "Nhà sản xuất",
+    "borrowers": "Người mượn",
+    "loans": "Đơn mượn",
+    "about": "Về chúng tôi"
+  }
+}
