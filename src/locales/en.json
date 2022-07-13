@@ -1,8 +1,34 @@
 {
-  "message": "hello i18n !!",
+  "message": {
+    "view_header": "{table} LIST",
+    "create_header": "CREATE",
+    "create_message": "Create new {table}",
+    "update_header": "UPDATE",
+    "update_message": "Update {table} with"
+  },
   "project_name": "Library Management",
   "welcome_header": "Welcome to my project",
   "welcome_message": "Here is the front-end of Library Management demo project (using .NET 6 as BE Project and VueJS+TS as FE Project)",
+  "error": {
+    "header": "PAGE NOT FOUND",
+    "message": "Your page has not been found! Please check again or contact the administrator to get support."
+  },
+  "user_box": {
+    "hello_message" : "Hello {user},",
+    "log-in": "Log in",
+    "log-out": "Log out",
+    "sign-up": "Sign up",
+    "forgot-password": "Forgot password",
+    "reset-password": "Reset password",
+    "fullName": "Full name",
+    "email": "Email address",
+    "password": "Password",
+    "signup_message": "You are new? Click here to sign up.",
+    "social_login_message": "or click the buttons below to log-in with social accounts.",
+    "logout_message" : "You have logged out successfully! Please return to",
+    "logout_message2" : "page to log-in and continue with your work.",
+    "already_message" : "Already registered"
+  },
   "nav": {
     "home": "Home",
     "books": "Books",
@@ -27,31 +53,26 @@
     "contact_us": "CONTACT US"
   },
   "authors": {
-    "view_header": "AUTHOR LIST",
-    "create_btn": "Create new author",
     "author_id": "Author ID",
     "book_id": "Book ID",
     "author_name": "Author name"
   },
   "books": {
-    "view_header": "BOOK LIST",
-    "create_btn": "Create new book",
     "book_id": "Book ID",
     "book_title": "Book title",
-    "publisher_id": "Publisher ID"
+    "publisher_id": "Publisher ID",
+    "publisher_list": "Publisher list"
   },
-  "branch": {
+  "branches": {
     "branch_id": "Branch ID",
     "branch_name": "Branch name",
     "branch_address": "Branch address"
   },
-  "borrowers" : { 
-    "view_header": "BORROWER LIST",
-    "create_btn": "Create new borrower", 
+  "borrowers" : {
     "borrower_id": "Borrower ID",
     "borrower_name": "Borrower name",
     "borrower_address": "Borrower address",
-    "borrower_contact_number": "Borrower contact number"
+    "borrower_number": "Borrower contact number"
   },
   "copies": {
     "copies_id": "Copies ID",
@@ -61,8 +82,6 @@
     "avail_copies_number": "Total number of availble copies"
   },
   "loans" : {
-    "view_header": "LOAN ORDER LIST",
-    "create_btn": "Create new order",
     "loan_id": "Loan ID",
     "book_id": "Book ID",
     "branch_id": "Branch ID",
@@ -71,13 +90,11 @@
     "due_date": "Due date",
     "loan_status": "Loan order status"
   },
-  "publishers" : {  
-    "view_header": "PUBLISHER LIST",
-    "create_btn": "Create new publisher",
+  "publishers" : {
     "publisher_id": "Publisher ID",
     "publisher_name": "Publisher name",
     "publisher_address": "Publisher address",
-    "publisher_contact_number": "Publisher contact number"
+    "publisher_number": "Publisher contact number"
   },
   "about": {
     "header": "This is an about page",

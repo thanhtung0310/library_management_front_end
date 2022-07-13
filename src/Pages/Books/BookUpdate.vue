@@ -1,11 +1,13 @@
 <template>
   <div class="update-box">
     <div class="box-header">
-      <p>Update book with id {{ bookID }}</p>
+      <p>
+        {{ $t("message.update_message", { table: "author" }) }} {{ bookID }}
+      </p>
     </div>
     <div class="form">
       <div class="form-group databox">
-        <label>Book title: </label>
+        <label>{{ $t("books.book_title") }}: </label>
         <input
           :value="bookTitle"
           type="text"
@@ -15,7 +17,7 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Publisher ID: </label>
+        <label>{{ $t("books.publisher_id") }}: </label>
         <input
           :value="publisherID"
           type="text"
@@ -25,13 +27,9 @@
         />
       </div>
       <div class="form-group button">
-        <input
-          type="button"
-          name="btnUpdate"
-          id="btnUpdate"
-          value="UPDATE"
-          @click="$emit('close'), updateData()"
-        />
+        <button type="submit" @click="$emit('close'), updateData()">
+          {{ $t("message.update_header") }}
+        </button>
       </div>
     </div>
   </div>
@@ -47,7 +45,8 @@ export default defineComponent({
     return {
       baseURL: "https://localhost:7123/api/books/",
       input: {
-        book_Title: this.bookTitle,
+        bookID: this.bookID,
+        bookTitle: this.bookTitle,
         book_PublisherID: this.publisherID,
       },
     };
@@ -67,19 +66,34 @@ export default defineComponent({
     },
   },
   methods: {
+    // update new data into database
     updateData(): void {
-      // parse dữ liệu sang dạng JSON
-      const modelParse = JSON.parse(JSON.stringify(this.input));
+      // parsing data from parent comp to child comp
+      this.input.bookID = this.bookID;
+      this.input.bookTitle = this.bookTitle;
+      this.input.book_PublisherID = this.publisherID;
 
-      // gọi API update
+      // parsing data into Json format
+      const body = JSON.stringify(this.input);
+      const headers = {
+        "Content-Type": "application/json",
+      };
+
+      // call axios put callback
       axios
-        .put(this.baseURL + this.bookID, modelParse)
+        .put(this.baseURL + this.bookID, body, { headers })
         .then(() => {
           alert("Success update book with id = " + this.bookID);
         })
         .catch((error) => {
+          alert("Cannot connect to server...");
           console.log(error);
         });
+    },
+  },
+  computed: {
+    msg() {
+      return this.$t("books.btnUpdate");
     },
   },
 });

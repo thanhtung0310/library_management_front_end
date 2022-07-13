@@ -1,8 +1,25 @@
 {
-  "message": "bonjour i18n !!",
+  "message": {
+    "view_header": "LISTE DES {table}",
+    "create_header": "CRÉER",
+    "create_message": "Créer un nouveau {table}",
+    "update_header": "RÉVISE",
+    "update_message": "Révise {table} avec"
+  },
   "project_name": "Gestion de la Bibliothèque",
   "welcome_header": "Bienvenue dans mon projet",
   "welcome_message": "Voici le front-end du projet de démonstration Gestion de la Bibliothèque (utilisant .NET 6 comme projet BE et VueJS+TS comme projet FE)",
+  "error": {
+    "header": "PAGE NON TROUVÉE",
+    "message": "Votre page n'a pas été trouvée ! Veuillez vérifier à nouveau ou contacter l'administrateur pour obtenir de l'aide."
+  },
+  "user_box": {
+    "hello_message" : "Bonjour {user},",
+    "log-in": "Le log-in",
+    "log-out": "Le log-out",
+    "sign-up": "S'inscrire",
+    "forgot-password": "Mot de passe oublié"
+  },
   "nav": {
     "home": "Domicile",
     "books": "Livres",
@@ -10,24 +27,32 @@
     "publishers": "Éditeurs",
     "borrowers": "Emprunteurs",
     "loans": "Prêts",
-    "about": "Sur"
+    "about": "Sur",
+    "terms": "Termes & Conditions",
+    "privacy": "Règles de confidentialité"
   },
   "footer": {
-    "message": "This is my project"
+    "footer_message": "C'est mon projet",
+    "my_info": {
+      "header": "Mes informations de base",
+      "name": "PHAN THANH TUNG",
+      "num": "098 327 5380",
+      "email": "thanhtung031099{'@'}gmail.com",
+      "addr": "5fl, 18 Ton That Thuyet str, Hanoi, Vietnam"
+    },
+    "quick_links": "LIENS RAPIDES",
+    "contact_us": "NOUS CONTACTER"
   },
   "authors": {
-    "view_header": "LISTE DES AUTEURS",
-    "create_btn": "Créer un nouvel auteur",
     "author_id": "Identifiant de l'auteur",
     "book_id": "Identifiant du livre",
     "author_name": "Nom de l'auteur"
   },
   "books": {
-    "view_header": "LISTE DE LIVRES",
-    "create_btn": "Créer un nouveau livre",
     "book_id": "Identifiant du livre",
     "book_title": "Titre de livre",
-    "publisher_id": "Éditeur du livre"
+    "publisher_id": "Éditeur du livre",
+    "publisher_list": "Liste des éditeurs"
   },
   "branch": {
     "branch_id": "ID de la succursale",
@@ -38,7 +63,7 @@
     "borrower_id": "ID de l'emprunteur",
     "borrower_name": "Nom de l'emprunteur",
     "borrower_address": "Adresse de l'emprunteur",
-    "borrower_contact_number": "Numéro de contact de l'emprunteur"
+    "borrower_number": "Numéro de contact de l'emprunteur"
   },
   "copies": {
     "copies_id": "ID de copies",

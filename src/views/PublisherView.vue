@@ -1,44 +1,44 @@
 <template>
   <div class="publishers">
-    <h1>PUBLISHER LIST</h1>
+    <h1>{{ $t("message.view_header", { table: "PUBLISHER" }) }}</h1>
     <div class="insert-div" id="insert-div">
       <button
         id="btnInsertPage"
         @click="goToInsertPage(), (showModal = !showModal)"
       >
-        Create new publisher
+        {{ $t("message.create_message", { table: "publisher" }) }}
       </button>
       <router-view :show="showModal" @close="showModal = false"></router-view>
     </div>
 
-    <div class="update-div" id="update-div">
+    <div class="update-div" id="update-div" style="display: none">
       <Update
-        :publisherID="output.publisher_PublisherID"
-        :publisherName="output.publisher_PublisherName"
-        :publisherAddr="output.publisher_PublisherAddress"
-        :publisherNo="output.publisher_PublisherPhone"
+        :publisherID="output.publisherID"
+        :publisherName="output.publisherName"
+        :publisherAddr="output.publisherAddr"
+        :publisherNo="output.publisherNum"
       ></Update>
     </div>
 
     <table class="table">
       <thead>
         <tr>
-          <th>Publisher ID</th>
-          <th>Publisher name</th>
-          <th>Publisher address</th>
-          <th>Publisher contact number</th>
+          <th>{{ $t("publishers.publisher_id") }}</th>
+          <th>{{ $t("publishers.publisher_name") }}</th>
+          <th>{{ $t("publishers.publisher_address") }}</th>
+          <th>{{ $t("publishers.publisher_number") }}</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(row, index) in data" :key="index">
-          <td>{{ row.publisher_PublisherID }}</td>
-          <td>{{ row.publisher_PublisherName }}</td>
-          <td>{{ row.publisher_PublisherAddress }}</td>
-          <td>{{ row.publisher_PublisherPhone }}</td>
-          <td @click="passDatatoUpdatePage(row)">
+        <tr v-for="(row, index) in publishers" :key="index">
+          <td>{{ row.publisherID }}</td>
+          <td>{{ row.publisherName }}</td>
+          <td>{{ row.publisherAddr }}</td>
+          <td>{{ row.publisherNum }}</td>
+          <td @click="passDatatoUpdatePage(row), scrollToAnchor('update-div')">
             <font-awesome-icon class="icon" icon="fa-solid fa-circle-info" />
           </td>
-          <td @click="passDatatoDeletePage(row)">
+          <td @click="deleteData(row)">
             <font-awesome-icon class="icon" icon="fa-solid fa-ban" />
           </td>
         </tr>
@@ -60,34 +60,45 @@ export default defineComponent({
   data() {
     return {
       baseURL: "https://localhost:7123/api/publishers/",
-      data: null,
+      publishers: null,
       output: {
-        publisher_PublisherID: Number,
-        publisher_PublisherName: String,
-        publisher_PublisherAddress: String,
-        publisher_PublisherPhone: String,
+        publisherID: Number,
+        publisherName: String,
+        publisherAddr: String,
+        publisherNum: String,
       },
       showModal: false,
     };
   },
   methods: {
+    // call to insert page
     goToInsertPage() {
-      this.$router.push("/publisher_insert");
+      this.$router.push("/publishers/insert");
     },
+    // go to id div
+    scrollToAnchor(element: string): void {
+      location.hash = "#" + element;
+    },
+    // get datatable from database
     getDataFromApi(): void {
+      // call axios get callback
       axios
         .get(this.baseURL)
         .then((response) => {
-          this.data = response.data;
+          if (response.data != null) this.publishers = response.data;
+          else alert("No data is loaded into table!");
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          alert("Cannot connect to server...");
+          console.log(error);
+        });
     },
+    // pass data from parent comp to child comp
     passDatatoUpdatePage(model: undefined): void {
-      // parse dữ liệu sang dạng JSON
-      const modelParse = JSON.parse(JSON.stringify(model));
-      this.output = modelParse;
+      // parsing data into Json format
+      this.output = JSON.parse(JSON.stringify(model));
 
-      // display updateDiv mỗi khi ấn nút details (default: display=none)
+      // display update modal
       const updateDiv = document.getElementById("update-div");
       if (updateDiv != null) {
         if (updateDiv.style.display == "none")
@@ -97,24 +108,26 @@ export default defineComponent({
         else updateDiv.style.display = "none";
       }
     },
-    passDatatoDeletePage(model: undefined): void {
-      // parse dữ liệu sang dạng JSON
-      const modelParse = JSON.parse(JSON.stringify(model));
-      this.output = modelParse;
+    // delete data from datatable with id
+    deleteData(model: undefined): void {
+      // parsing data into Json format
+      this.output = JSON.parse(JSON.stringify(model));
 
-      // gọi API delete
+      // call axios delete callback
       axios
-        .delete(this.baseURL + this.output.publisher_PublisherID)
-        .then((response) => {
-          this.data = response.data;
-          // alert("Success delete book with id = " + this.output.book_BookID);
+        .delete(this.baseURL + this.output.publisherID)
+        .then(() => {
+          alert(
+            "Success delete publisher with id = " + this.output.publisherID
+          );
         })
         .catch((error) => {
+          alert("Cannot connect to server...");
           console.log(error);
         });
     },
   },
-  mounted() {
+  created() {
     this.getDataFromApi();
   },
 });

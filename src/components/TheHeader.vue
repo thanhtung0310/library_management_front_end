@@ -3,18 +3,19 @@
     <div class="header">
       <div class="logo">
         <h4>
-          <router-link to="/">{{ $t("project_name") }}</router-link>
+          <router-link to="/home">{{ $t("project_name") }}</router-link>
         </h4>
       </div>
       <TheSearch />
       <ul class="nav-links">
-        <router-link to="/">{{ $t("nav.home") }}</router-link>
+        <router-link to="/home">{{ $t("nav.home") }}</router-link>
         <router-link to="/books">{{ $t("nav.books") }}</router-link>
         <router-link to="/authors">{{ $t("nav.authors") }}</router-link>
         <router-link to="/publishers">{{ $t("nav.publishers") }}</router-link>
         <router-link to="/borrowers">{{ $t("nav.borrowers") }}</router-link>
         <router-link to="/loans">{{ $t("nav.loans") }}</router-link>
       </ul>
+      <TheUserBox />
       <TheLangSwitcher />
       <div class="burger">
         <div class="line1"></div>
@@ -29,12 +30,14 @@
 import { defineComponent } from "vue";
 import TheSearch from "./TheSearch.vue";
 import TheLangSwitcher from "./TheLangSwitcher.vue";
+import TheUserBox from "./TheUserBox.vue";
 
 export default defineComponent({
   name: "TheHeader",
   components: {
     TheSearch,
     TheLangSwitcher,
+    TheUserBox,
   },
   methods: {
     navSlide(): void {
@@ -55,4 +58,4 @@ export default defineComponent({
 });
 </script>
 
-<style src="@/assets/css/header-style.css"></style>
+<style src="@/assets/css/header-style.css" scoped></style>

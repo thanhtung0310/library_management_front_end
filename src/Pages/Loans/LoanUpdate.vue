@@ -1,11 +1,13 @@
 <template>
   <div class="update-box">
     <div class="box-header">
-      <p>Update loan order with id {{ loanID }}</p>
+      <p>
+        {{ $t("message.update_message", { table: "loan order" }) }} {{ loanID }}
+      </p>
     </div>
     <div class="form">
       <div class="form-group databox">
-        <label>Book ID: </label>
+        <label>{{ $t("loans.book_id") }}: </label>
         <input
           :value="bookID"
           type="text"
@@ -15,7 +17,7 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Branch ID: </label>
+        <label>{{ $t("loans.branch_id") }}: </label>
         <input
           :value="branchID"
           type="text"
@@ -25,7 +27,7 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Borrower ID: </label>
+        <label>{{ $t("loans.borrower_id") }}: </label>
         <input
           :value="borrowerID"
           type="text"
@@ -35,7 +37,7 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Loan date: </label>
+        <label>{{ $t("loans.loan_date") }}: </label>
         <input
           :value="loanDate"
           type="date"
@@ -45,7 +47,7 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Due date: </label>
+        <label>{{ $t("loans.due_date") }}: </label>
         <input
           :value="dueDate"
           type="date"
@@ -55,7 +57,7 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Loan status: </label>
+        <label>{{ $t("loans.loan_status") }}: </label>
         <input
           :value="loanStatus"
           type="text"
@@ -65,13 +67,9 @@
         />
       </div>
       <div class="form-group button">
-        <input
-          type="button"
-          name="btnUpdate"
-          id="btnUpdate"
-          value="UPDATE"
-          @click="$emit('close'), updateData()"
-        />
+        <button type="submit" @click="$emit('close'), updateData()">
+          {{ $t("message.update_header") }}
+        </button>
       </div>
     </div>
   </div>
@@ -87,12 +85,13 @@ export default defineComponent({
     return {
       baseURL: "https://localhost:7123/api/loans/",
       input: {
-        book_loans_BookID: this.publisherAddr,
-        book_loans_BranchID: this.publisherNo,
-        book_loans_CardNo: this.publisherNo,
-        book_loans_DateOut: this.publisherNo,
-        book_loans_DueDate: this.publisherNo,
-        book_loans_Status: this.publisherNo,
+        loanID: this.loanID,
+        loan_BookID: this.bookID,
+        loan_BranchID: this.branchID,
+        loan_BorrowerID: this.borrowerID,
+        loanDate: this.loanDate,
+        dueDate: this.dueDate,
+        loanStatus: this.loanStatus,
       },
     };
   },
@@ -127,17 +126,31 @@ export default defineComponent({
     },
   },
   methods: {
+    // update new data into database
     updateData(): void {
-      // parse dữ liệu sang dạng JSON
-      const modelParse = JSON.parse(JSON.stringify(this.input));
+      // parsing data from parent comp to child comp
+      this.input.loanID = this.loanID;
+      this.input.loan_BookID = this.bookID;
+      this.input.loan_BranchID = this.branchID;
+      this.input.loan_BorrowerID = this.borrowerID;
+      this.input.loanDate = this.loanDate;
+      this.input.dueDate = this.dueDate;
+      this.input.loanStatus = this.loanStatus;
 
-      // gọi API update
+      // parsing data into Json format
+      const body = JSON.stringify(this.input);
+      const headers = {
+        "Content-Type": "application/json",
+      };
+
+      // call axios put callback
       axios
-        .put(this.baseURL + this.loanID, modelParse)
+        .put(this.baseURL + this.loanID, body, { headers })
         .then(() => {
-          alert("Success update publisher with id = " + this.loanID);
+          alert("Success update loan order with id = " + this.loanID);
         })
         .catch((error) => {
+          alert("Cannot connect to server...");
           console.log(error);
         });
     },

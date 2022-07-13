@@ -1,37 +1,27 @@
 <template>
   <div v-if="show" class="insert-box">
     <div class="box-header">
-      <p>{{ $t("message.create_message", { table: "borrower" }) }}</p>
+      <p>{{ $t("message.create_message", { table: "branch" }) }}</p>
     </div>
     <div class="form">
       <div class="form-group databox">
-        <label>{{ $t("borrowers.borrower_name") }}: </label>
+        <label>{{ $t("branches.branch_name") }}: </label>
         <input
-          v-model="input.borrowerName"
+          v-model="input.branchName"
           type="text"
-          name="borrower_name"
-          id="borrower_name"
-          placeholder="Please enter borrower name..."
+          name="branch_name"
+          id="branch name"
+          placeholder="Please enter branch name..."
         />
       </div>
       <div class="form-group databox">
-        <label>{{ $t("borrowers.borrower_address") }}: </label>
+        <label>{{ $t("branches.branch_address") }}: </label>
         <input
-          v-model="input.borrowerAddr"
+          v-model="input.branchAddr"
           type="text"
-          name="borrower_addr"
-          id="borrower_addr"
-          placeholder="Please enter borrower address..."
-        />
-      </div>
-      <div class="form-group databox">
-        <label>{{ $t("borrowers.borrower_number") }}: </label>
-        <input
-          v-model="input.borrowerNum"
-          type="text"
-          name="borrower_no"
-          id="borrower_no"
-          placeholder="Please enter borrower contact number..."
+          name="branch_address"
+          id="branch_address"
+          placeholder="Please enter branch address..."
         />
       </div>
       <div class="form-group button">
@@ -48,14 +38,13 @@ import { defineComponent } from "vue";
 import axios from "axios";
 
 export default defineComponent({
-  name: "borrower_insert",
+  name: "branch_insert",
   data() {
     return {
-      baseURL: "https://localhost:7123/api/borrowers/",
+      baseURL: "https://localhost:7123/api/branches/",
       input: {
-        borrowerName: null,
-        borrowerAddr: null,
-        borrowerNum: null,
+        branchName: null,
+        branchAddr: null,
       },
     };
   },
@@ -63,13 +52,13 @@ export default defineComponent({
     show: Boolean,
   },
   methods: {
-    // create new borrower in database
+    // create new branch in database
     createData(): void {
       // call axios post callback
       axios
         .post(this.baseURL, this.input)
         .then(() => {
-          alert("New borrower is created successfully!");
+          alert("New branch is created successfully!");
           this.clearData();
         })
         .catch((error) => {
@@ -80,9 +69,8 @@ export default defineComponent({
     },
     // clear input data
     clearData(): void {
-      this.input.borrowerName = null;
-      this.input.borrowerAddr = null;
-      this.input.borrowerNum = null;
+      this.input.branchName = null;
+      this.input.branchAddr = null;
     },
   },
 });

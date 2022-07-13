@@ -1,22 +1,21 @@
 <template>
-  <div class="borrowers">
-    <h1>{{ $t("message.view_header", { table: "BORROWER" }) }}</h1>
+  <div class="branches">
+    <h1>{{ $t("message.view_header", { table: "BRANCH" }) }}</h1>
     <div class="insert-div" id="insert-div">
       <button
         id="btnInsertPage"
         @click="goToInsertPage(), (showModal = !showModal)"
       >
-        {{ $t("message.create_message", { table: "borrower" }) }}
+        {{ $t("message.create_message", { table: "branch" }) }}
       </button>
       <router-view :show="showModal" @close="showModal = false"></router-view>
     </div>
 
     <div class="update-div" id="update-div" style="display: none">
       <Update
-        :borrowerID="output.borrowerID"
-        :borrowerName="output.borrowerName"
-        :borrowerAddr="output.borrowerAddr"
-        :borrowerNo="output.borrowerNum"
+        :branchID="output.branchID"
+        :branchName="output.branchName"
+        :branchAddr="output.branchAddr"
       ></Update>
     </div>
 
@@ -24,25 +23,21 @@
       <table class="table">
         <thead>
           <tr>
-            <th>{{ $t("borrowers.borrower_id") }}</th>
-            <th>{{ $t("borrowers.borrower_name") }}</th>
-            <th>{{ $t("borrowers.borrower_address") }}</th>
-            <th>{{ $t("borrowers.borrower_number") }}</th>
+            <th>{{ $t("branches.branch_id") }}</th>
+            <th>{{ $t("branches.branch_name") }}</th>
+            <th>{{ $t("branches.branch_address") }}</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(row, index) in borrowers" :key="index">
-            <td>{{ row.borrowerID }}</td>
-            <td>{{ row.borrowerName }}</td>
-            <td>{{ row.borrowerAddr }}</td>
-            <td>{{ row.borrowerNum }}</td>
+          <tr v-for="(row, index) in branches" :key="index">
+            <td>{{ row.branchID }}</td>
+            <td>{{ row.branchName }}</td>
+            <td>{{ row.branchAddr }}</td>
             <td
               @click="passDatatoUpdatePage(row), scrollToAnchor('update-div')"
             >
               <font-awesome-icon class="icon" icon="fa-solid fa-circle-info" />
-            </td>
-            <td @click="deleteData(row)">
-              <font-awesome-icon class="icon" icon="fa-solid fa-ban" />
             </td>
           </tr>
         </tbody>
@@ -54,22 +49,21 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
-import Update from "@/pages/Borrowers/BorrowerUpdate.vue";
+import Update from "@/pages/Branches/BranchUpdate.vue";
 
 export default defineComponent({
-  name: "BorrowerView",
+  name: "BranchView",
   components: {
     Update,
   },
   data() {
     return {
-      baseURL: "https://localhost:7123/api/borrowers/",
-      borrowers: null,
+      baseURL: "https://localhost:7123/api/branches/",
+      branches: null,
       output: {
-        borrowerID: Number,
-        borrowerName: String,
-        borrowerAddr: String,
-        borrowerNum: String,
+        branchID: Number,
+        branchName: Number,
+        branchAddr: String,
       },
       showModal: false,
     };
@@ -77,7 +71,7 @@ export default defineComponent({
   methods: {
     // call to insert page
     goToInsertPage() {
-      this.$router.push("/borrowers/insert");
+      this.$router.push("/branches/insert");
     },
     // go to id div
     scrollToAnchor(element: string): void {
@@ -89,7 +83,7 @@ export default defineComponent({
       axios
         .get(this.baseURL)
         .then((response) => {
-          if (response.data != null) this.borrowers = response.data;
+          if (response.data != null) this.branches = response.data;
           else alert("No data is loaded into table!");
         })
         .catch((error) => {
@@ -97,7 +91,7 @@ export default defineComponent({
           console.log(error);
         });
     },
-    // pass data from parent comp to child comp
+    // pass data from parent component to child component
     passDatatoUpdatePage(model: undefined): void {
       // parsing data into Json format
       this.output = JSON.parse(JSON.stringify(model));
@@ -111,22 +105,6 @@ export default defineComponent({
           updateDiv.style.display = "block";
         else updateDiv.style.display = "none";
       }
-    },
-    // delete data from datatable with id
-    deleteData(model: undefined): void {
-      // parse dữ liệu sang dạng JSON
-      this.output = JSON.parse(JSON.stringify(model));
-
-      // call axios delete call back
-      axios
-        .delete(this.baseURL + this.output.borrowerID)
-        .then(() => {
-          alert("Success delete borrower with id = " + this.output.borrowerID);
-        })
-        .catch((error) => {
-          alert("Cannot connect to server...");
-          console.log(error);
-        });
     },
   },
   created() {

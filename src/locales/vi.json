@@ -1,8 +1,25 @@
 {
-  "message": "xin chào i18n !!",
+  "message": {
+    "view_header": "DANH SÁCH {table}",
+    "create_header": "TẠO MỚI",
+    "create_message": "Tạo {table} mới",
+    "update_header": "CẬP NHẬT",
+    "update_message": "Cập nhật {table} với"
+  },
   "project_name": "Quản lý thư viện",
   "welcome_header": "Chào mừng bạn đến với dự án của tôi",
   "welcome_message": "Đây là giao diện của dự án demo Quản lý thư viện (sử dụng BE là .NET 6 và FE là Vue+TS)",
+  "error": {
+    "header": "KHÔNG TÌM THẤY TRANG WEB",
+    "message": "Trang web này không thể tìm thấy! Vui lòng kiểm tra lại hoặc liên hệ quản trị viên để được hỗ trợ"
+  },
+  "user_box": {
+    "hello_message" : "Xin chào {user},",
+    "log-in": "Đăng nhập",
+    "log-out": "Đăng xuất",
+    "sign-up": "Đăng ký",
+    "forgot-password": "Quên mật khẩu"
+  },
   "nav": {
     "home": "Trang chính",
     "books": "Truyện",
@@ -10,6 +27,68 @@
     "publishers": "Nhà sản xuất",
     "borrowers": "Người mượn",
     "loans": "Đơn mượn",
-    "about": "Về chúng tôi"
+    "about": "Về chúng tôi",
+    "terms": "Điều khoản sử dụng",
+    "privacy": "Các điều luật bảo mật"
+  },
+  "footer": {
+    "footer_message": "Đây là dự án của tôi",
+    "my_info": {
+      "header": "Các thông tin cơ bản",
+      "name": "PHAN THANH TÙNG",
+      "num": "098 327 5380",
+      "email": "thanhtung031099{'@'}gmail.com",
+      "addr": "Tầng 5, số 18 đường Tôn Thất Thuyết, Hà Nội, Việt Nam"
+    },
+    "quick_links": "ĐƯỜNG DẪN NHANH",
+    "contact_us": "LIÊN HỆ TÔI"
+  },
+  "authors": {
+    "author_id": "Mã tác giả",
+    "book_id": "Mã sách",
+    "author_name": "Tên tác giả"
+  },
+  "books": {
+    "book_id": "Mã sách",
+    "book_title": "Tên sách",
+    "publisher_id": "Mã nhà sản xuất",
+    "publisher_list": "Danh sách nhà sản xuất"
+  },
+  "branches": {
+    "branch_id": "Mã chi nhánh",
+    "branch_name": "Tên chi nhánh",
+    "branch_address": "Địa chỉ"
+  },
+  "borrowers" : {
+    "borrower_id": "Mã người mượn",
+    "borrower_name": "Tên người mượn",
+    "borrower_address": "Địa chỉ",
+    "borrower_number": "SĐT cá nhân"
+  },
+  "copies": {
+    "copies_id": "Mã bản sao chép",
+    "book_id": "Mã sách",
+    "branch_id": "Mã chi nhánh",
+    "total_copies_number": "Số lượng bản sao chép",
+    "avail_copies_number": "Số lượng sách còn lại"
+  },
+  "loans" : {
+    "loan_id": "Mã đơn mượn",
+    "book_id": "Mã sách",
+    "branch_id": "Mã chi nhánh",
+    "borrower_id": "Mã người mượn",
+    "loan_date": "Ngày mượn",
+    "due_date": "Ngày hết hạn",
+    "loan_status": "Tình trạng đơn"
+  },
+  "publishers" : {
+    "publisher_id": "Mã nhà sản xuất",
+    "publisher_name": "Tên nhà sản xuất",
+    "publisher_address": "Địa chỉ",
+    "publisher_number": "SĐT công ty"
+  },
+  "about": {
+    "header": "Đây là trang giới thiệu về bản thân",
+    "message": "Thông tin chi tiết về bản thân tôi..."
   }
 }

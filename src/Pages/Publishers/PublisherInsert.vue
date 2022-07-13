@@ -1,13 +1,13 @@
 <template>
   <div v-if="show" class="insert-box">
     <div class="box-header">
-      <p>Create new publisher</p>
+      <p>{{ $t("message.create_message", { table: "publisher" }) }}</p>
     </div>
     <div class="form">
       <div class="form-group databox">
-        <label>Publisher name: </label>
+        <label>{{ $t("publishers.publisher_name") }}: </label>
         <input
-          v-model="input.publisher_PublisherName"
+          v-model="input.publisherName"
           type="text"
           name="publisher_name"
           id="publisher_name"
@@ -15,9 +15,9 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Publisher address: </label>
+        <label>{{ $t("publishers.publisher_address") }}: </label>
         <input
-          v-model="input.publisher_PublisherAddress"
+          v-model="input.publisherAddr"
           type="text"
           name="publisher_addr"
           id="publisher_addr"
@@ -25,9 +25,9 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Publisher contact number: </label>
+        <label>{{ $t("publishers.publisher_number") }}: </label>
         <input
-          v-model="input.publisher_PublisherPhone"
+          v-model="input.publisherNum"
           type="text"
           name="publisher_no"
           id="publisher_no"
@@ -35,13 +35,9 @@
         />
       </div>
       <div class="form-group button">
-        <input
-          type="button"
-          name="btnCreate"
-          id="btnCreate"
-          value="CREATE"
-          @click="$emit('close'), createPublisher()"
-        />
+        <button type="submit" @click="$emit('close'), createData()">
+          {{ $t("message.create_header") }}
+        </button>
       </div>
     </div>
   </div>
@@ -56,11 +52,10 @@ export default defineComponent({
   data() {
     return {
       baseURL: "https://localhost:7123/api/publishers/",
-      data: null,
       input: {
-        publisher_PublisherName: null,
-        publisher_PublisherAddress: null,
-        publisher_PublisherPhone: null,
+        publisherName: null,
+        publisherAddr: null,
+        publisherNum: null,
       },
     };
   },
@@ -68,23 +63,26 @@ export default defineComponent({
     show: Boolean,
   },
   methods: {
-    createPublisher(): void {
+    // create new publisher in database
+    createData(): void {
+      // call axios post callback
       axios
         .post(this.baseURL, this.input)
-        .then((response) => {
-          this.data = response.data;
-          alert("Publisher is created successfully!");
+        .then(() => {
+          alert("New publisher is created successfully!");
           this.clearData();
         })
         .catch((error) => {
-          console.log(error);
+          alert("Cannot connect to server...");
           this.clearData();
+          console.log(error);
         });
     },
+    // clear input data
     clearData(): void {
-      this.input.publisher_PublisherName = null;
-      this.input.publisher_PublisherAddress = null;
-      this.input.publisher_PublisherPhone = null;
+      this.input.publisherName = null;
+      this.input.publisherAddr = null;
+      this.input.publisherNum = null;
     },
   },
 });

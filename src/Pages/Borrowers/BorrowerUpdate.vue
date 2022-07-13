@@ -1,11 +1,14 @@
 <template>
   <div class="update-box">
     <div class="box-header">
-      <p>Update borrower with id {{ borrowerID }}</p>
+      <p>
+        {{ $t("message.update_message", { table: "borrower" }) }}
+        {{ borrowerID }}
+      </p>
     </div>
     <div class="form">
       <div class="form-group databox">
-        <label>Borrower name: </label>
+        <label>{{ $t("borrowers.borrower_name") }}: </label>
         <input
           :value="borrowerName"
           type="text"
@@ -15,7 +18,7 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Borrower address: </label>
+        <label>{{ $t("borrowers.borrower_address") }}: </label>
         <input
           :value="borrowerAddr"
           type="text"
@@ -25,7 +28,7 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Borrower contact number: </label>
+        <label>{{ $t("borrowers.borrower_number") }}: </label>
         <input
           :value="borrowerNo"
           type="text"
@@ -35,13 +38,9 @@
         />
       </div>
       <div class="form-group button">
-        <input
-          type="button"
-          name="btnUpdate"
-          id="btnUpdate"
-          value="UPDATE"
-          @click="$emit('close'), updateData()"
-        />
+        <button type="submit" @click="$emit('close'), updateData()">
+          {{ $t("message.update_header") }}
+        </button>
       </div>
     </div>
   </div>
@@ -57,9 +56,10 @@ export default defineComponent({
     return {
       baseURL: "https://localhost:7123/api/borrowers/",
       input: {
-        borrower_BorrowerName: this.borrowerName,
-        borrower_BorrowerAddress: this.borrowerAddr,
-        borrower_BorrowerPhone: this.borrowerNo,
+        borrowerID: this.borrowerID,
+        borrowerName: this.borrowerName,
+        borrowerAddr: this.borrowerAddr,
+        borrowerNum: this.borrowerNo,
       },
     };
   },
@@ -82,17 +82,28 @@ export default defineComponent({
     },
   },
   methods: {
+    // update new data into database
     updateData(): void {
-      // parse dữ liệu sang dạng JSON
-      const modelParse = JSON.parse(JSON.stringify(this.input));
+      // parsing data from parent comp to child comp
+      this.input.borrowerID = this.borrowerID;
+      this.input.borrowerName = this.borrowerName;
+      this.input.borrowerAddr = this.borrowerAddr;
+      this.input.borrowerNum = this.borrowerNo;
 
-      // gọi API update
+      // parsing data into Json format
+      const body = JSON.stringify(this.input);
+      const headers = {
+        "Content-Type": "application/json",
+      };
+
+      // call axios put callback
       axios
-        .put(this.baseURL + this.borrowerID, modelParse)
+        .put(this.baseURL + this.borrowerID, body, { headers })
         .then(() => {
           alert("Success update borrower with id = " + this.borrowerID);
         })
         .catch((error) => {
+          alert("Cannot connect to server...");
           console.log(error);
         });
     },

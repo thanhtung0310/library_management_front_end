@@ -1,13 +1,13 @@
 <template>
   <div v-if="show" class="insert-box">
     <div class="box-header">
-      <p>Create new author</p>
+      <p>{{ $t("message.create_message", { table: "author" }) }}</p>
     </div>
     <div class="form">
       <div class="form-group databox">
-        <label>Book ID: </label>
+        <label>{{ $t("authors.book_id") }}: </label>
         <input
-          v-model="input.book_authors_BookID"
+          v-model="input.author_BookID"
           type="text"
           name="book_id"
           id="book_id"
@@ -15,9 +15,9 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Author name: </label>
+        <label>{{ $t("authors.author_name") }}: </label>
         <input
-          v-model="input.book_authors_AuthorName"
+          v-model="input.authorName"
           type="text"
           name="author_name"
           id="author_name"
@@ -25,13 +25,9 @@
         />
       </div>
       <div class="form-group button">
-        <input
-          type="button"
-          name="btnCreate"
-          id="btnCreate"
-          value="CREATE"
-          @click="$emit('close'), createAuthor()"
-        />
+        <button type="submit" @click="$emit('close'), createData()">
+          {{ $t("message.create_header") }}
+        </button>
       </div>
     </div>
   </div>
@@ -46,10 +42,10 @@ export default defineComponent({
   data() {
     return {
       baseURL: "https://localhost:7123/api/authors/",
-      data: null,
+      new_data: null,
       input: {
-        book_authors_BookID: null,
-        book_authors_AuthorName: null,
+        author_BookID: null,
+        authorName: null,
       },
     };
   },
@@ -57,22 +53,25 @@ export default defineComponent({
     show: Boolean,
   },
   methods: {
-    createAuthor(): void {
+    // create new author in database
+    createData(): void {
+      // call axios post callback
       axios
         .post(this.baseURL, this.input)
-        .then((response) => {
-          this.data = response.data;
-          alert("Author is created successfully!");
+        .then(() => {
+          alert("New author is created successfully!");
           this.clearData();
         })
         .catch((error) => {
-          console.log(error);
+          alert("Cannot connect to server...");
           this.clearData();
+          console.log(error);
         });
     },
+    // clear input data
     clearData(): void {
-      this.input.book_authors_BookID = null;
-      this.input.book_authors_AuthorName = null;
+      this.input.author_BookID = null;
+      this.input.authorName = null;
     },
   },
 });

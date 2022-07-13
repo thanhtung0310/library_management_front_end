@@ -1,13 +1,13 @@
 <template>
   <div v-if="show" class="insert-box">
     <div class="box-header">
-      <p>Create new loan order</p>
+      <p>{{ $t("message.create_message", { table: "loan order" }) }}</p>
     </div>
     <div class="form">
       <div class="form-group databox">
-        <label>Book ID: </label>
+        <label>{{ $t("loans.book_id") }}: </label>
         <input
-          v-model="input.book_loans_BookID"
+          v-model="input.loan_BookID"
           type="text"
           name="book_id"
           id="book_id"
@@ -15,9 +15,9 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Branch ID: </label>
+        <label>{{ $t("loans.branch_id") }}: </label>
         <input
-          v-model="input.book_loans_BranchID"
+          v-model="input.loan_BranchID"
           type="text"
           name="branch_id"
           id="branch_id"
@@ -25,37 +25,43 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Borrower ID: </label>
+        <label>{{ $t("loans.borrower_id") }}: </label>
         <input
-          v-model="input.book_loans_CardNo"
+          v-model="input.loan_BorrowerID"
           type="text"
           name="borrower_id"
           id="borrower_id"
           placeholder="Please enter borrower ID..."
         />
       </div>
+      <div class="borrower-create">
+        <router-link to="/borrowers/insert">{{
+          $t("message.create_message", { table: "borrower" })
+        }}</router-link>
+      </div>
       <div class="form-group databox">
-        <label>Loan date: </label>
+        <label>{{ $t("loans.loan_date") }}: </label>
         <input
-          v-model="input.book_loans_DateOut"
+          v-model="input.loanDate"
           type="date"
           name="loan_date"
           id="loan_date"
         />
       </div>
       <div class="form-group databox">
-        <label>Due date: </label>
+        <label>{{ $t("loans.due_date") }}: </label>
         <input
-          v-model="input.book_loans_DueDate"
+          v-model="input.dueDate"
           type="date"
           name="due_date"
           id="due_date"
         />
       </div>
+      <!-- options = 'Done/In Progress' -->
       <div class="form-group databox">
-        <label>Loan order status: </label>
+        <label>{{ $t("loans.loan_status") }}: </label>
         <input
-          v-model="input.book_loans_Status"
+          v-model="input.loanStatus"
           type="text"
           name="loan_status"
           id="loan_status"
@@ -63,13 +69,9 @@
         />
       </div>
       <div class="form-group button">
-        <input
-          type="button"
-          name="btnCreate"
-          id="btnCreate"
-          value="CREATE"
-          @click="$emit('close'), createLoan()"
-        />
+        <button type="submit" @click="$emit('close'), createData()">
+          {{ $t("message.create_header") }}
+        </button>
       </div>
     </div>
   </div>
@@ -83,15 +85,15 @@ export default defineComponent({
   name: "loan_insert",
   data() {
     return {
-      baseURL: "https://localhost:7123/api/publishers/",
-      data: null,
+      // use proc
+      baseURL: "https://localhost:7123/api/loans/",
       input: {
-        book_loans_BookID: null,
-        book_loans_BranchID: null,
-        book_loans_CardNo: null,
-        book_loans_DateOut: null,
-        book_loans_DueDate: null,
-        book_loans_Status: null,
+        loan_BookID: null,
+        loan_BranchID: null,
+        loan_BorrowerID: null,
+        loanDate: null,
+        dueDate: null,
+        loanStatus: null,
       },
     };
   },
@@ -99,26 +101,29 @@ export default defineComponent({
     show: Boolean,
   },
   methods: {
-    createLoan(): void {
+    // create new loan order in database
+    createData(): void {
+      // call axios post callback
       axios
         .post(this.baseURL, this.input)
-        .then((response) => {
-          this.data = response.data;
-          alert("Loan order is created successfully!");
+        .then(() => {
+          alert("New loan order is created successfully!");
           this.clearData();
         })
         .catch((error) => {
-          console.log(error);
+          alert("Cannot connect to server...");
           this.clearData();
+          console.log(error);
         });
     },
+    // clear input data
     clearData(): void {
-      this.input.book_loans_BookID = null;
-      this.input.book_loans_BranchID = null;
-      this.input.book_loans_CardNo = null;
-      this.input.book_loans_DateOut = null;
-      this.input.book_loans_DueDate = null;
-      this.input.book_loans_Status = null;
+      this.input.loan_BookID = null;
+      this.input.loan_BranchID = null;
+      this.input.loan_BorrowerID = null;
+      this.input.loanDate = null;
+      this.input.dueDate = null;
+      this.input.loanStatus = null;
     },
   },
 });

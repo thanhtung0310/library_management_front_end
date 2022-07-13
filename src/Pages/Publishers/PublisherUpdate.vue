@@ -1,11 +1,14 @@
 <template>
   <div class="update-box">
     <div class="box-header">
-      <p>Update publisher with id {{ publisherID }}</p>
+      <p>
+        {{ $t("message.update_message", { table: "publisher" }) }}
+        {{ publisherID }}
+      </p>
     </div>
     <div class="form">
       <div class="form-group databox">
-        <label>Publisher name: </label>
+        <label>{{ $t("publishers.publisher_name") }}: </label>
         <input
           :value="publisherName"
           type="text"
@@ -15,7 +18,7 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Publisher address: </label>
+        <label>{{ $t("publishers.publisher_address") }}: </label>
         <input
           :value="publisherAddr"
           type="text"
@@ -25,7 +28,7 @@
         />
       </div>
       <div class="form-group databox">
-        <label>Publisher contact number: </label>
+        <label>{{ $t("publishers.publisher_number") }}: </label>
         <input
           :value="publisherNo"
           type="text"
@@ -35,13 +38,9 @@
         />
       </div>
       <div class="form-group button">
-        <input
-          type="button"
-          name="btnUpdate"
-          id="btnUpdate"
-          value="UPDATE"
-          @click="$emit('close'), updateData()"
-        />
+        <button type="submit" @click="$emit('close'), updateData()">
+          {{ $t("message.update_header") }}
+        </button>
       </div>
     </div>
   </div>
@@ -57,9 +56,10 @@ export default defineComponent({
     return {
       baseURL: "https://localhost:7123/api/publishers/",
       input: {
-        publisher_PublisherName: this.publisherName,
-        publisher_PublisherAddress: this.publisherAddr,
-        publisher_PublisherPhone: this.publisherNo,
+        publisherID: this.publisherID,
+        publisherName: this.publisherName,
+        publisherAddr: this.publisherAddr,
+        publisherNum: this.publisherNo,
       },
     };
   },
@@ -82,17 +82,28 @@ export default defineComponent({
     },
   },
   methods: {
+    // update new data into database
     updateData(): void {
-      // parse dữ liệu sang dạng JSON
-      const modelParse = JSON.parse(JSON.stringify(this.input));
+      // parsing data from parent comp to child comp
+      this.input.publisherID = this.publisherID;
+      this.input.publisherName = this.publisherName;
+      this.input.publisherAddr = this.publisherAddr;
+      this.input.publisherNum = this.publisherNo;
 
-      // gọi API update
+      // parsing data into Json format
+      const body = JSON.stringify(this.input);
+      const headers = {
+        "Content-Type": "application/json",
+      };
+
+      // call axios put callback
       axios
-        .put(this.baseURL + this.publisherID, modelParse)
+        .put(this.baseURL + this.publisherID, body, { headers })
         .then(() => {
           alert("Success update publisher with id = " + this.publisherID);
         })
         .catch((error) => {
+          alert("Cannot connect to server...");
           console.log(error);
         });
     },

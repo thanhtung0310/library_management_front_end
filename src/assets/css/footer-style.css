@@ -23,7 +23,23 @@
   align-items: center;
 }
 
+.mid-content .ft-contact ul {
+  margin-right: 40px;
+}
+
+.mid-content .ft-contact ul li {
+  list-style-type: none;
+}
+
+.right-content .content-links ul li {
+  list-style-type: none;
+}
+
 /* Social icon Model */
+
+.social-circle {
+  margin-top: 20%;
+}
 
 .social-circle a {
   display: inline-block;

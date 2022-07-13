@@ -2,28 +2,28 @@
   <div class="update-box">
     <div class="box-header">
       <p>
-        {{ $t("message.update_message", { table: "author" }) }} {{ authorID }}
+        {{ $t("message.update_message", { table: "branch" }) }} {{ branchID }}
       </p>
     </div>
     <div class="form">
       <div class="form-group databox">
-        <label>{{ $t("authors.book_id") }}: </label>
+        <label>{{ $t("branches.branch_name") }}: </label>
         <input
-          :value="bookID"
+          :value="branchName"
           type="text"
-          name="book_id"
-          id="book_id"
-          placeholder="Please update book id..."
+          name="branch_name"
+          id="branch_name"
+          placeholder="Please update branch name..."
         />
       </div>
       <div class="form-group databox">
-        <label>{{ $t("authors.author_name") }}: </label>
+        <label>{{ $t("branches.branch_address") }}: </label>
         <input
-          :value="authorName"
+          :value="branchAddr"
           type="text"
-          name="author_name"
-          id="author_name"
-          placeholder="Please update author name..."
+          name="branch_address"
+          id="branch_address"
+          placeholder="Please update branch address..."
         />
       </div>
       <div class="form-group button">
@@ -40,27 +40,27 @@ import { defineComponent } from "vue";
 import axios from "axios";
 
 export default defineComponent({
-  name: "author_update",
+  name: "branch_update",
   data() {
     return {
-      baseURL: "https://localhost:7123/api/authors/",
+      baseURL: "https://localhost:7123/api/branches/",
       input: {
-        authorID: this.authorID,
-        author_BookID: this.bookID,
-        authorName: this.authorName,
+        branchID: this.branchID,
+        branchName: this.branchName,
+        branchAddr: this.branchAddr,
       },
     };
   },
   props: {
-    authorID: {
+    branchID: {
       default: 0,
       type: Number,
     },
-    bookID: {
+    branchName: {
       default: 0,
       type: Number,
     },
-    authorName: {
+    branchAddr: {
       default: "",
       type: String,
     },
@@ -69,9 +69,9 @@ export default defineComponent({
     // update new data into database
     updateData(): void {
       // parsing data from parent comp to child comp
-      this.input.authorID = this.authorID;
-      this.input.author_BookID = this.bookID;
-      this.input.authorName = this.authorName;
+      this.input.branchID = this.branchID;
+      this.input.branchName = this.branchName;
+      this.input.branchAddr = this.branchAddr;
 
       // parsing data into Json format
       const body = JSON.stringify(this.input);
@@ -81,9 +81,9 @@ export default defineComponent({
 
       // gọi API update
       axios
-        .put(this.baseURL + this.authorID, body, { headers })
+        .put(this.baseURL + this.branchID, body, { headers })
         .then(() => {
-          alert("Success update author with id = " + this.authorID);
+          alert("Success update branch with id = " + this.branchID);
         })
         .catch((error) => {
           alert("Cannot connect to server...");

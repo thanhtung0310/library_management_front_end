@@ -1,27 +1,28 @@
 <template>
   <div v-if="show" class="insert-box">
     <div class="box-header">
-      <p>Create new book</p>
+      <p>{{ $t("message.create_message", { table: "book" }) }}</p>
     </div>
     <div class="form">
       <div class="form-group databox">
-        <label>Book title: </label>
+        <label>{{ $t("books.book_title") }}: </label>
         <input
-          v-model="input.book_Title"
+          v-model="input.bookTitle"
           type="text"
-          name="book_title"
-          id="book_title"
+          name="bookTitle"
+          id="bookTitle"
           placeholder="Please enter book title..."
         />
       </div>
+      <!-- get publisher list and parse into publisher id -->
       <div class="form-group databox">
-        <label>Publisher ID: </label>
+        <label>{{ $t("books.publisher_id") }}: </label>
         <select
           v-model="input.book_PublisherID"
           name="publisher_id"
           id="publisher_id"
         >
-          <option value="">Select publisher</option>
+          <option default>{{ $t("books.publisher_list") }}</option>
           <option value="1">Alfred A. Knopf</option>
           <option value="2">Justin Bieber</option>
           <option value="3">The Rock</option>
@@ -29,18 +30,14 @@
         </select>
       </div>
       <div class="form-group button">
-        <input
-          type="button"
-          name="btnCreate"
-          id="btnCreate"
-          value="CREATE"
-          @click="$emit('close'), createBook()"
-        />
+        <button type="submit" @click="$emit('close'), createData()">
+          {{ $t("message.create_header") }}
+        </button>
       </div>
       <div class="publisher-create">
-        <router-link to="/publisher_insert"
-          >Click here to create new publisher</router-link
-        >
+        <router-link to="/publishers/insert">{{
+          $t("message.create_message", { table: "publisher" })
+        }}</router-link>
       </div>
     </div>
   </div>
@@ -55,9 +52,8 @@ export default defineComponent({
   data() {
     return {
       baseURL: "https://localhost:7123/api/books/",
-      data: null,
       input: {
-        book_Title: null,
+        bookTitle: null,
         book_PublisherID: null,
       },
     };
@@ -66,21 +62,24 @@ export default defineComponent({
     show: Boolean,
   },
   methods: {
-    createBook(): void {
+    // create new book in database
+    createData(): void {
+      // call axios post callback
       axios
         .post(this.baseURL, this.input)
-        .then((response) => {
-          this.data = response.data;
-          alert("Book is created successfully!");
+        .then(() => {
+          alert("New book is created successfully!");
           this.clearData();
         })
         .catch((error) => {
-          console.log(error);
+          alert("Cannot connect to server...");
           this.clearData();
+          console.log(error);
         });
     },
+    // clear input data
     clearData(): void {
-      this.input.book_Title = null;
+      this.input.bookTitle = null;
       this.input.book_PublisherID = null;
     },
   },

@@ -1,8 +1,10 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import store from './store'
 import axios from 'axios'
 import vueAxios from 'vue-axios'
+import i18n from './i18n'
 
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -11,15 +13,15 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 /* import specific icons */
-import { faCircleInfo, faBan, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-
+import { faCircleInfo, faBan, faMagnifyingGlass, faGlobe } from '@fortawesome/free-solid-svg-icons'
 import {} from '@fortawesome/free-regular-svg-icons'
-
-import {faFacebook, faTwitter, faInstagram, faYoutube} from '@fortawesome/free-brands-svg-icons'
-
-import i18n from './i18n'
+import {faFacebook, faTwitter, faInstagram, faYoutube, faGoogle} from '@fortawesome/free-brands-svg-icons'
 
 /* add icons to the library */
-library.add(faCircleInfo, faBan, faMagnifyingGlass, faFacebook, faTwitter, faInstagram, faYoutube)
+library.add(faCircleInfo, faBan, faMagnifyingGlass, faFacebook, faTwitter, faInstagram, faYoutube, faGlobe, faGoogle)
 
-createApp(App).use(i18n).use(router, axios, vueAxios).component('font-awesome-icon', FontAwesomeIcon).mount('#app')
+const app = createApp(App)
+app.use(i18n).use(store).use(router, axios, vueAxios)
+app.provide('axios', app.config.globalProperties.axios)
+app.component('font-awesome-icon', FontAwesomeIcon)
+app.mount('#app')
