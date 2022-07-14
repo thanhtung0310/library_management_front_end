@@ -8,15 +8,30 @@
       </div>
       <div class="form-group">
         <label>{{ $t("user_box.email") }}: </label>
-        <input type="email" name="email" id="email" />
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder="Please enter your email..."
+        />
       </div>
       <div class="form-group">
         <label>{{ $t("user_box.password") }}: </label>
-        <input type="password" name="password" id="password" />
+        <input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="Please enter your password..."
+        />
       </div>
       <div class="form-group">
         <label>Retype your {{ $t("user_box.password") }}: </label>
-        <input type="password" name="password2" id="password2" />
+        <input
+          type="password"
+          name="password2"
+          id="password2"
+          placeholder="Please re-enter your password..."
+        />
       </div>
       <button type="submit">{{ $t("user_box.sign-up") }}</button>
       <p class="forgot-password">

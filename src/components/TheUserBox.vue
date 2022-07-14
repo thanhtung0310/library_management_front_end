@@ -8,8 +8,12 @@
     </div>
     <div class="user_options">
       <ul>
-        <li>{{ $t("user_box.log-in") }}</li>
-        <li>{{ $t("user_box.log-out") }}</li>
+        <li>
+          <router-link to="/log-in">{{ $t("user_box.log-in") }}</router-link>
+        </li>
+        <li>
+          <router-link to="/log-out">{{ $t("user_box.log-out") }}</router-link>
+        </li>
       </ul>
     </div>
   </div>

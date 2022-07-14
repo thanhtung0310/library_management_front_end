@@ -4,19 +4,26 @@
       <h3 style="text-transform: uppercase">{{ $t("user_box.log-in") }}</h3>
       <div class="form-group">
         <label>{{ $t("user_box.email") }}: </label>
-        <input :value="user.userEmail" type="email" name="email" id="email" />
+        <input
+          v-model="user.userEmail"
+          type="email"
+          name="email"
+          id="email"
+          placeholder="Please enter your email..."
+        />
       </div>
       <div class="form-group">
         <label>{{ $t("user_box.password") }}: </label>
         <input
-          :value="user.userPassword"
+          v-model="user.userPassword"
           type="password"
           name="password"
           id="password"
+          placeholder="Please enter your password..."
         />
       </div>
       <button type="submit" @click="logIn()">
-        <router-link to="/home"></router-link>
+        <router-link to="/home">{{ $t("user_box.log-in") }}</router-link>
       </button>
       <p class="forgot-password">
         <router-link to="/forgot-password"
@@ -27,6 +34,7 @@
         <router-link to="/sign-up">{{
           $t("user_box.signup_message")
         }}</router-link>
+        <br />
         {{ $t("user_box.social_login_message") }}
       </p>
 
@@ -52,8 +60,8 @@ export default defineComponent({
   data() {
     return {
       user: {
-        userEmail: String,
-        userPassword: Number,
+        userEmail: null,
+        userPassword: null,
       },
     };
   },

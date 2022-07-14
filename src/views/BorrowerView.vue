@@ -28,6 +28,8 @@
             <th>{{ $t("borrowers.borrower_name") }}</th>
             <th>{{ $t("borrowers.borrower_address") }}</th>
             <th>{{ $t("borrowers.borrower_number") }}</th>
+            <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>

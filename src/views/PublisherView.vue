@@ -27,6 +27,8 @@
           <th>{{ $t("publishers.publisher_name") }}</th>
           <th>{{ $t("publishers.publisher_address") }}</th>
           <th>{{ $t("publishers.publisher_number") }}</th>
+          <th></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>

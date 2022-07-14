@@ -54,7 +54,7 @@
     "publisher_id": "Éditeur du livre",
     "publisher_list": "Liste des éditeurs"
   },
-  "branch": {
+  "branches": {
     "branch_id": "ID de la succursale",
     "branch_name": "Nom de la succursale",
     "branch_address": "Adresse de la succursale"
@@ -90,5 +90,13 @@
   "about": {
     "header": "Ceci est une page à propos",
     "message": "Informations sur moi-même..."
+  },
+  "terms": {
+    "header": "(In french) This is a terms & conditions page",
+    "message": "(In french) Terms & Conditions info"
+  },
+  "privacy": {
+    "header": "(In french) This is a privacy page",
+    "message": "(In french) Privacy rules..."
   }
 }

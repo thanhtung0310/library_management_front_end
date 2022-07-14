@@ -34,6 +34,8 @@
             <th>{{ $t("loans.loan_date") }}</th>
             <th>{{ $t("loans.due_date") }}</th>
             <th>{{ $t("loans.loan_status") }}</th>
+            <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>

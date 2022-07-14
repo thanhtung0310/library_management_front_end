@@ -12,6 +12,7 @@
         <router-link to="/books">{{ $t("nav.books") }}</router-link>
         <router-link to="/authors">{{ $t("nav.authors") }}</router-link>
         <router-link to="/publishers">{{ $t("nav.publishers") }}</router-link>
+        <router-link to="/branches">{{ $t("nav.branches") }}</router-link>
         <router-link to="/borrowers">{{ $t("nav.borrowers") }}</router-link>
         <router-link to="/loans">{{ $t("nav.loans") }}</router-link>
       </ul>

@@ -35,6 +35,7 @@
     "authors": "Authors",
     "publishers": "Publishers",
     "borrowers": "Borrowers",
+    "branches": "Branches",
     "loans": "Loans",
     "about": "About",
     "terms": "Terms & Conditions",
@@ -99,5 +100,13 @@
   "about": {
     "header": "This is an about page",
     "message": "Information about myself..."
+  },
+  "terms": {
+    "header": "This is a terms & conditions page",
+    "message": "Terms & Conditions info"
+  },
+  "privacy": {
+    "header": "This is a privacy page",
+    "message": "Privacy rules..."
   }
 }

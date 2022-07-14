@@ -2,14 +2,44 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/',
+    path: '/home',
     name: 'HomeView',
     component: () => import('@/views/HomeView.vue')
+  },
+  {
+    path: '/log-in',
+    name: 'log-in',
+    component: () => import('@/pages/Users/Log-In.vue'),
+  },
+  {
+    path: '/log-out',
+    name: 'log-out',
+    component: () => import('@/pages/Users/Log-Out.vue'),
+  },
+  {
+    path: '/sign-up',
+    name: 'sign-up',
+    component: () => import('@/pages/Users/Sign-Up.vue'),
+  },
+  {
+    path: '/forgot-password',
+    name: 'forgot-password',
+    component: () => import('@/pages/Users/ForgotPassword.vue'),
   },
   {
     path: '/about',
     name: 'AboutView',
     component: () => import('@/views/AboutView.vue')
+  },
+  {
+    path: '/terms',
+    name: 'TermsView',
+    component: () => import('@/views/TermsView.vue')
+  },
+  {
+    path: '/privacy',
+    name: 'PrivacyView',
+    component: () => import('@/views/PrivacyView.vue')
   },
   {
     path: '/books',

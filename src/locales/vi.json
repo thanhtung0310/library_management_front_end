@@ -90,5 +90,14 @@
   "about": {
     "header": "Đây là trang giới thiệu về bản thân",
     "message": "Thông tin chi tiết về bản thân tôi..."
+  },
+  "terms": {
+    "header": "Đây là trang về các điều khoản khi sử dụng phần mềm",
+    "message": "Thông tin chi tiết về các điều khoản"
+  },
+  "privacy": {
+    "header": "Đây là trang về các vấn đề bảo mật",
+    "message": "Thông tin chi tiết về các điều khoản bảo mật"
   }
+
 }
