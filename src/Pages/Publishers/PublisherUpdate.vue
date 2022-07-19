@@ -54,7 +54,7 @@ export default defineComponent({
   name: "publisher_update",
   data() {
     return {
-      baseURL: "https://localhost:7123/api/publishers/",
+      // baseURL: "https://localhost:7123/api/publishers/",
       input: {
         publisherID: this.publisherID,
         publisherName: this.publisherName,
@@ -80,6 +80,10 @@ export default defineComponent({
       default: "",
       type: String,
     },
+    baseURL: {
+      type: String, 
+      default: "",
+    }
   },
   methods: {
     // update new data into database
@@ -111,4 +115,4 @@ export default defineComponent({
 });
 </script>
 
-<style src="@/assets/css/update-style.css" scoped></style>
+<style src="@/assets/css/update-style.css"></style>

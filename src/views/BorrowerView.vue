@@ -8,7 +8,11 @@
       >
         {{ $t("message.create_message", { table: "borrower" }) }}
       </button>
-      <router-view :show="showModal" @close="showModal = false"></router-view>
+      <router-view 
+        :show="showModal" 
+        :baseURL="baseURL"
+        @close="showModal = false"
+      ></router-view>
     </div>
 
     <div class="update-div" id="update-div" style="display: none">
@@ -17,6 +21,7 @@
         :borrowerName="output.borrowerName"
         :borrowerAddr="output.borrowerAddr"
         :borrowerNo="output.borrowerNum"
+        :baseURL="baseURL"
       ></Update>
     </div>
 

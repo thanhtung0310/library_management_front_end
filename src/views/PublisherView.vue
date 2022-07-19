@@ -8,7 +8,11 @@
       >
         {{ $t("message.create_message", { table: "publisher" }) }}
       </button>
-      <router-view :show="showModal" @close="showModal = false"></router-view>
+      <router-view 
+        :show="showModal" 
+        :baseURL="baseURL"
+        @close="showModal = false"
+      ></router-view>
     </div>
 
     <div class="update-div" id="update-div" style="display: none">
@@ -17,9 +21,10 @@
         :publisherName="output.publisherName"
         :publisherAddr="output.publisherAddr"
         :publisherNo="output.publisherNum"
+        :baseURL="baseURL"
       ></Update>
     </div>
-
+    
     <table class="table">
       <thead>
         <tr>

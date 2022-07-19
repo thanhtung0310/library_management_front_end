@@ -1,23 +1,25 @@
 <template>
   <div class="books">
     <h1>{{ $t("message.view_header", { table: "BOOK" }) }}</h1>
-    <div class="insert-div" id="insert-div">
-      <button
-        id="btnInsertPage"
-        @click="goToInsertPage(), (showModal = !showModal)"
-      >
-        {{ $t("message.create_message", { table: "book" }) }}
-      </button>
-      <router-view :show="showModal" @close="showModal = false"></router-view>
+
+    <el-button @click="showInsertModal()" round>
+      {{ $t("message.create_message", { table: "book" }) }}
+    </el-button>
+
+    <div class="insert-div" id="insert-div" style="display: none">
+      <InsertModal :baseURL="baseURL" @refresh="getDataFromApi"></InsertModal>
     </div>
 
     <div class="update-div" id="update-div" style="display: none">
-      <Update
+      <UpdateModal
         :bookID="output.bookID"
         :bookTitle="output.bookTitle"
         :publisherID="output.book_PublisherID"
-      ></Update>
+        :baseURL="baseURL"
+        @refresh="getDataFromApi"
+      ></UpdateModal>
     </div>
+
     <div class="table-view">
       <table class="table">
         <thead>
@@ -56,17 +58,20 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
-import Update from "@/pages/Books/BookUpdate.vue";
+import UpdateModal from "@/pages/Books/BookUpdate.vue";
+import InsertModal from "@/pages/Books/BookInsert.vue";
+import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
+import type { Action } from "element-plus";
 
 export default defineComponent({
   name: "BookView",
   components: {
-    Update,
+    UpdateModal,
+    InsertModal,
   },
   data() {
     return {
       baseURL: "https://localhost:7123/api/books/",
-      // baseURL2: "https://localhost:7123/Get/book_list",
       books: null,
       output: {
         bookID: Number,
@@ -77,9 +82,9 @@ export default defineComponent({
     };
   },
   methods: {
-    // call to insert page
-    goToInsertPage() {
-      this.$router.push("/books/insert");
+    // test function
+    testFunction(): void {
+      console.log("refresh");
     },
     // go to id div
     scrollToAnchor(element: string): void {
@@ -91,43 +96,114 @@ export default defineComponent({
       axios
         .get(this.baseURL)
         .then((response) => {
-          if (response.data != null) this.books = response.data;
-          else alert("No data is loaded into table!");
+          if (response.data != null) {
+            this.books = response.data;
+            // open success notification
+            ElNotification({
+              title: "Success",
+              message: "Data refresh!",
+              type: "success",
+            });
+          } else {
+            // open warning notification
+            ElNotification({
+              title: "Warning",
+              message: "No data is loaded into table!",
+              type: "warning",
+            });
+          }
         })
         .catch((error) => {
-          alert("Cannot connect to server...");
+          // open error notification
+          ElNotification({
+            title: "Error",
+            message: "Cannot connect to server...",
+            type: "error",
+          });
           console.log(error);
         });
     },
+    // show insert modal
+    showInsertModal(): void {
+      // display update modal
+      const insertDiv = document.getElementById("insert-div");
+      const updateDiv = document.getElementById("update-div");
+      if (insertDiv != null && updateDiv != null) {
+        if (
+          insertDiv.style.display == "none" ||
+          updateDiv.style.display == "block"
+        ) {
+          insertDiv.style.display = "block";
+          updateDiv.style.display = "none";
+        } else if (insertDiv.style.display == "block")
+          insertDiv.style.display = "none";
+      }
+    },
     // pass data from parent comp to child comp
-    passDatatoUpdatePage(model: undefined): void {
+    passDatatoUpdatePage(model: null): void {
       // parsing data into Json format
       this.output = JSON.parse(JSON.stringify(model));
 
       // display update modal
       const updateDiv = document.getElementById("update-div");
-      if (updateDiv != null) {
-        if (updateDiv.style.display == "none")
+      const insertDiv = document.getElementById("insert-div");
+      if (updateDiv != null && insertDiv != null) {
+        if (
+          updateDiv.style.display == "none" ||
+          insertDiv.style.display == "block"
+        ) {
           updateDiv.style.display = "block";
-        else if (updateDiv.style.display == "block")
+          insertDiv.style.display = "none";
+        } else if (updateDiv.style.display == "block")
           updateDiv.style.display = "block";
         else updateDiv.style.display = "none";
       }
     },
     // delete data from datable with id
-    deleteData(model: undefined): void {
+    deleteData(model: null): void {
       // parsing data into Json format
       this.output = JSON.parse(JSON.stringify(model));
 
-      // call axios delete callback
-      axios
-        .delete(this.baseURL + this.output.bookID)
+      // open delete confirmation modal
+      ElMessageBox.confirm(
+        "This row data will be deleted. Continue?",
+        "Warning",
+        {
+          distinguishCancelAndClose: true,
+          confirmButtonText: "OK",
+          cancelButtonText: "Cancel",
+          draggable: true,
+        }
+      )
         .then(() => {
-          alert("Success delete book with id = " + this.output.bookID);
+          // call axios delete callback
+          axios
+            .delete(this.baseURL + this.output.bookID)
+            .then(() => {
+              // open success message
+              ElMessage({
+                type: "success",
+                message: "Delete process completed!",
+              });
+              this.getDataFromApi();
+            })
+            .catch((error) => {
+              // open error message
+              ElMessage({
+                type: "error",
+                message: "Delete process failed!",
+              });
+              console.log(error);
+            });
         })
-        .catch((error) => {
-          alert("Cannot connect to server...");
-          console.log(error);
+        .catch((action: Action) => {
+          ElMessage({
+            type: "info",
+            message:
+              action === "cancel"
+                ? "Delete process cancelled!"
+                : "Nothing happen :3",
+          });
         });
     },
   },
@@ -137,4 +213,4 @@ export default defineComponent({
 });
 </script>
 
-<style src="@/assets/css/table-style.css" scoped></style>
+<style src="@/assets/css/table-style.css"></style>

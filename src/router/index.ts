@@ -4,7 +4,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/home',
     name: 'HomeView',
-    component: () => import('@/views/HomeView.vue')
+    component: () => import('@/views/shared/HomeView.vue')
   },
   {
     path: '/log-in',
@@ -29,17 +29,17 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/about',
     name: 'AboutView',
-    component: () => import('@/views/AboutView.vue')
+    component: () => import('@/views/shared/AboutView.vue')
   },
   {
     path: '/terms',
     name: 'TermsView',
-    component: () => import('@/views/TermsView.vue')
+    component: () => import('@/views/shared/TermsView.vue')
   },
   {
     path: '/privacy',
     name: 'PrivacyView',
-    component: () => import('@/views/PrivacyView.vue')
+    component: () => import('@/views/shared/PrivacyView.vue')
   },
   {
     path: '/books',

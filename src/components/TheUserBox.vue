@@ -19,7 +19,7 @@
   </div>
 </template>
 
-<style scoped>
+<style>
 .user_box {
   display: flex;
 }

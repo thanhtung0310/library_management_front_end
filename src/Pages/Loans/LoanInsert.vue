@@ -86,7 +86,7 @@ export default defineComponent({
   data() {
     return {
       // use proc
-      baseURL: "https://localhost:7123/api/loans/",
+      // baseURL: "https://localhost:7123/api/loans/",
       input: {
         loan_BookID: null,
         loan_BranchID: null,
@@ -99,6 +99,10 @@ export default defineComponent({
   },
   props: {
     show: Boolean,
+    baseURL: {
+      type: String, 
+      default: "",
+    }
   },
   methods: {
     // create new loan order in database
@@ -130,4 +134,4 @@ export default defineComponent({
 </script>
 
 
-<style src="@/assets/css/insert-style.css" scoped></style>
+<style src="@/assets/css/insert-style.css"></style>

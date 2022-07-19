@@ -15,7 +15,7 @@ export default defineComponent({
   name: "App",
   components: {
     TheHeader,
-    TheFooter
+    TheFooter,
   },
 });
 </script>
@@ -26,6 +26,9 @@ export default defineComponent({
   text-align: center;
   background-color: #5d4954;
   color: white;
-  overflow-x: hidden;
+}
+[class*='el-'] {
+  background-color: #5d4954 !important;
+  color: white !important;
 }
 </style>

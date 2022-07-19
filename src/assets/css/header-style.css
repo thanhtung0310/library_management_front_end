@@ -176,7 +176,7 @@
 
 /* Language Switcher Model */
 
-.language-option {
+/* .language-option {
   display: inline-block;
   margin-left: 30px;
   cursor: pointer;
@@ -239,6 +239,6 @@
 
 .language-option .flag-dropdown ul li a:hover {
   color: #dfa974;
-}
+} */
 
 /*  */

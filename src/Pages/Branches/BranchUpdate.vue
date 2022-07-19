@@ -43,7 +43,7 @@ export default defineComponent({
   name: "branch_update",
   data() {
     return {
-      baseURL: "https://localhost:7123/api/branches/",
+      // baseURL: "https://localhost:7123/api/branches/",
       input: {
         branchID: this.branchID,
         branchName: this.branchName,
@@ -64,6 +64,10 @@ export default defineComponent({
       default: "",
       type: String,
     },
+    baseURL: {
+      type: String, 
+      default: "",
+    }
   },
   methods: {
     // update new data into database
@@ -94,4 +98,4 @@ export default defineComponent({
 });
 </script>
 
-<style src="@/assets/css/update-style.css" scoped></style>
+<style src="@/assets/css/update-style.css"></style>

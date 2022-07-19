@@ -1,65 +1,103 @@
 <template>
-  <div v-if="show" class="insert-box">
-    <div class="box-header">
-      <p>{{ $t("message.create_message", { table: "book" }) }}</p>
-    </div>
-    <div class="form">
-      <div class="form-group databox">
+  <div class="insert-box">
+    <el-form :model="input" :rules="rules">
+      <div class="box-header">
+        <p>{{ $t("message.create_message", { table: "book" }) }}</p>
+      </div>
+
+      <el-form-item prop="title">
         <label>{{ $t("books.book_title") }}: </label>
-        <input
+        <el-input
           v-model="input.bookTitle"
-          type="text"
-          name="bookTitle"
-          id="bookTitle"
           placeholder="Please enter book title..."
         />
-      </div>
-      <!-- get publisher list and parse into publisher id -->
-      <div class="form-group databox">
+      </el-form-item>
+
+      <el-form-item prop="ID">
         <label>{{ $t("books.publisher_id") }}: </label>
-        <select
+        <el-input
           v-model="input.book_PublisherID"
-          name="publisher_id"
-          id="publisher_id"
+          placeholder="Please enter publisher ID..."
+        />
+        <!-- <el-select v-model="input.book_PublisherID">
+          <el-option default>{{ $t("books.publisher_list") }}</el-option>
+          <el-option value="1">Alfred A. Knopf</el-option>
+          <el-option value="2">Justin Bieber</el-option>
+          <el-option value="3">The Rock</el-option>
+          <el-option value="4">J. K. Rowling</el-option>
+        </el-select> -->
+      </el-form-item>
+
+      <el-form-item class="button-group">
+        <el-button type="success" @click="$emit('close'), createData()" round>
+          {{ $t("message.create_header") }}</el-button
         >
-          <option default>{{ $t("books.publisher_list") }}</option>
-          <option value="1">Alfred A. Knopf</option>
-          <option value="2">Justin Bieber</option>
-          <option value="3">The Rock</option>
-          <option value="4">J. K. Rowling</option>
-        </select>
-      </div>
-      <div class="form-group button">
-        <button type="submit" @click="$emit('close'), createData()">
-          {{ $t("message.create_header") }}
-        </button>
-      </div>
-      <div class="publisher-create">
-        <router-link to="/publishers/insert">{{
-          $t("message.create_message", { table: "publisher" })
-        }}</router-link>
-      </div>
-    </div>
+        <el-button type="info" @click="clearData()" round
+          >Reset input</el-button
+        >
+      </el-form-item>
+
+      <el-form-item class="link">
+        <div class="publisher-create">
+          <router-link to="/publishers/insert">{{
+            $t("message.create_message", { table: "publisher" })
+          }}</router-link>
+        </div>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, reactive } from "vue";
 import axios from "axios";
+import { ElMessage, FormInstance, FormRules } from "element-plus";
 
 export default defineComponent({
   name: "book_insert",
   data() {
     return {
-      baseURL: "https://localhost:7123/api/books/",
+      // baseURL: "https://localhost:7123/api/books/",
       input: {
         bookTitle: null,
         book_PublisherID: null,
       },
+      rules: reactive<FormRules>({
+        title: [
+          {
+            required: true,
+            message: "Please input book title",
+            trigger: "blur",
+          },
+          {
+            min: 3,
+            max: 5,
+            message: "Length should be 3 to 5",
+            trigger: "blur",
+          },
+        ],
+        ID: [
+          {
+            required: true,
+            message: "Please input book title",
+            trigger: "blur",
+          },
+          {
+            min: 3,
+            max: 5,
+            message: "Length should be 3 to 5",
+            trigger: "blur",
+          },
+        ],
+      }),
     };
   },
   props: {
     show: Boolean,
+    baseURL: {
+      type: String,
+      default: "",
+    },
   },
   methods: {
     // create new book in database
@@ -68,14 +106,38 @@ export default defineComponent({
       axios
         .post(this.baseURL, this.input)
         .then(() => {
-          alert("New book is created successfully!");
+          // open success notification
+          ElMessage({
+            type: "success",
+            message: "Insert process completed!",
+          });
           this.clearData();
+          this.$emit("refresh");
         })
         .catch((error) => {
-          alert("Cannot connect to server...");
-          this.clearData();
+          // open error notification
+          ElMessage({
+            type: "error",
+            message: "Insert process failed! Please try again.",
+          });
           console.log(error);
         });
+    },
+    // submit form
+    submitForm(formEl: FormInstance | undefined) {
+      if (!formEl) return;
+      formEl.validate((valid, fields) => {
+        if (valid) {
+          console.log("submit!");
+        } else {
+          console.log("error submit!", fields);
+        }
+      });
+    },
+    // reset form input
+    resetForm(formEl: FormInstance | undefined) {
+      if (!formEl) return;
+      formEl.resetFields();
     },
     // clear input data
     clearData(): void {
@@ -86,5 +148,4 @@ export default defineComponent({
 });
 </script>
 
-
-<style src="@/assets/css/insert-style.css" scoped></style>
+<style src="@/assets/css/insert-style.css"></style>

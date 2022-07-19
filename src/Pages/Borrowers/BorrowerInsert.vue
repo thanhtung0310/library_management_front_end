@@ -51,7 +51,7 @@ export default defineComponent({
   name: "borrower_insert",
   data() {
     return {
-      baseURL: "https://localhost:7123/api/borrowers/",
+      // baseURL: "https://localhost:7123/api/borrowers/",
       input: {
         borrowerName: null,
         borrowerAddr: null,
@@ -61,6 +61,10 @@ export default defineComponent({
   },
   props: {
     show: Boolean,
+    baseURL: {
+      type: String, 
+      default: "",
+    }
   },
   methods: {
     // create new borrower in database
@@ -89,4 +93,4 @@ export default defineComponent({
 </script>
 
 
-<style src="@/assets/css/insert-style.css" scoped></style>
+<style src="@/assets/css/insert-style.css"></style>

@@ -8,7 +8,10 @@
       >
         {{ $t("message.create_message", { table: "branch" }) }}
       </button>
-      <router-view :show="showModal" @close="showModal = false"></router-view>
+      <router-view 
+        :show="showModal" 
+        :baseURL="baseURL"
+        @close="showModal = false"></router-view>
     </div>
 
     <div class="update-div" id="update-div" style="display: none">
@@ -16,6 +19,7 @@
         :branchID="output.branchID"
         :branchName="output.branchName"
         :branchAddr="output.branchAddr"
+        :baseURL="baseURL"
       ></Update>
     </div>
 

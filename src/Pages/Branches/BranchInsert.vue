@@ -41,7 +41,7 @@ export default defineComponent({
   name: "branch_insert",
   data() {
     return {
-      baseURL: "https://localhost:7123/api/branches/",
+      // baseURL: "https://localhost:7123/api/branches/",
       input: {
         branchName: null,
         branchAddr: null,
@@ -50,6 +50,10 @@ export default defineComponent({
   },
   props: {
     show: Boolean,
+    baseURL: {
+      type: String, 
+      default: "",
+    }
   },
   methods: {
     // create new branch in database
@@ -77,4 +81,4 @@ export default defineComponent({
 </script>
 
 
-<style src="@/assets/css/insert-style.css" scoped></style>
+<style src="@/assets/css/insert-style.css"></style>

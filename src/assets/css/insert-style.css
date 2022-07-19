@@ -10,7 +10,7 @@
 .box-header {
   font-size: 20px;
   font-weight: bolder;
-  margin-top: -30px;
+  margin-top: -20px;
 }
 
 .form-group.databox {
@@ -19,8 +19,7 @@
   flex-wrap: wrap;
 }
 
-input[type=text], select#publisher_id {
-  margin-left: 20px;
-  min-width: 50%;
-  width: 60%;
+.el-form-item.button-group, .el-form-item.link {
+  display: inline-block;
+  margin: 5px auto;
 }

@@ -41,7 +41,7 @@ export default defineComponent({
   name: "author_insert",
   data() {
     return {
-      baseURL: "https://localhost:7123/api/authors/",
+      // baseURL: "https://localhost:7123/api/authors/",
       new_data: null,
       input: {
         author_BookID: null,
@@ -51,6 +51,10 @@ export default defineComponent({
   },
   props: {
     show: Boolean,
+    baseURL: {
+      type: String, 
+      default: "",
+    }
   },
   methods: {
     // create new author in database
@@ -78,4 +82,4 @@ export default defineComponent({
 </script>
 
 
-<style src="@/assets/css/insert-style.css" scoped></style>
+<style src="@/assets/css/insert-style.css"></style>
