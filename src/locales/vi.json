@@ -2,6 +2,7 @@
   "message": {
     "view_header": "DANH SÁCH {table}",
     "create_header": "TẠO MỚI",
+    "reset_message": "Nhập lại dữ liệu",
     "create_message": "Tạo {table} mới",
     "update_header": "CẬP NHẬT",
     "update_message": "Cập nhật {table} với"
@@ -26,6 +27,7 @@
     "authors": "Tác giả",
     "publishers": "Nhà sản xuất",
     "borrowers": "Người mượn",
+    "branches": "Chi nhánh",
     "loans": "Đơn mượn",
     "about": "Về chúng tôi",
     "terms": "Điều khoản sử dụng",

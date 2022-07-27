@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div class="update-box">
     <el-form>
@@ -8,14 +9,33 @@
       </div>
       <el-form-item>
         <label>{{ $t("books.book_title") }}: </label>
-        <el-input :value="bookTitle" v-model="input.bookTitle" />
+        <el-input v-model="bookTitle_value" type="text" id="book_title" />
       </el-form-item>
+
       <el-form-item>
         <label>{{ $t("books.publisher_id") }}: </label>
-        <el-input :value="publisherID" v-model="input.book_PublisherID" />
+        <el-select v-model="publisherID_value" style="width: 100%">
+          <el-option
+            v-for="item in publisher_list"
+            :key="item.publisherID"
+            :label="item.publisherName"
+            :value="item.publisherID"
+          >
+            <span style="float: left">{{ item.publisherName }}</span>
+            <span
+              style="
+                float: right;
+                color: var(--el-text-color-secondary);
+                font-size: 13px;
+              "
+              >{{ item.publisherID }}</span
+            >
+          </el-option>
+        </el-select>
       </el-form-item>
+
       <el-form-item class="button-group">
-        <el-button type="success" @click="$emit('close'), updateData()" round>
+        <el-button type="success" @click="updateData()" round>
           {{ $t("message.update_header") }}
         </el-button>
       </el-form-item>
@@ -24,47 +44,77 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import axios from "axios";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessageBox } from "element-plus";
 import type { Action } from "element-plus";
+import { serverNotification, requestMessage } from "@/axios-functions";
 
 export default defineComponent({
   name: "book_update",
   data() {
     return {
       input: {
-        bookID: this.bookID,
-        bookTitle: this.bookTitle,
-        book_PublisherID: this.publisherID,
+        bookID: ref(0),
+        bookTitle: ref(""),
+        book_PublisherID: ref(0),
       },
+      publisher_baseURL: "https://localhost:7123/api/publishers/",
+      publisher_list: null,
+      bookTitle_value: ref(""),
+      publisherID_value: ref(0),
     };
   },
   props: {
     bookID: {
+      default: ref(0),
       type: Number,
-      default: 0,
     },
     bookTitle: {
+      default: ref(""),
       type: String,
-      default: "",
     },
     publisherID: {
+      default: ref(0),
       type: Number,
-      default: 0,
     },
     baseURL: {
+      default: ref(""),
       type: String,
-      default: "",
     },
+    runMethod: Boolean,
   },
   methods: {
+    getDataFromParentComp(): void {
+      this.bookTitle_value = this.bookTitle;
+      this.publisherID_value = this.publisherID;
+      console.log(this.bookTitle_value, this.publisherID_value);
+    },
+    // get publisher list
+    getDataFromApi(): void {
+      // call axios get callback
+      axios
+        .get(this.publisher_baseURL)
+        .then((response) => {
+          if (response.data != null) {
+            this.publisher_list = response.data;
+          } else {
+            // open warning notification
+            serverNotification("warning");
+          }
+        })
+        .catch((error) => {
+          // open error notification
+          serverNotification("error");
+          console.log(error);
+        });
+    },
     // update new data into database
     updateData(): void {
       // parsing data from parent comp to child comp
       this.input.bookID = this.bookID;
-      this.input.bookTitle = this.bookTitle;
-      this.input.book_PublisherID = this.publisherID;
+      this.input.bookTitle = this.bookTitle_value;
+      this.input.book_PublisherID = this.publisherID_value;
 
       // parsing data into Json format
       const body = JSON.stringify(this.input);
@@ -72,7 +122,7 @@ export default defineComponent({
         "Content-Type": "application/json",
       };
 
-      // open delete confirmation modal
+      // open update confirmation modal
       ElMessageBox.confirm("This ID will be updated. Continue?", "Info", {
         distinguishCancelAndClose: true,
         confirmButtonText: "OK",
@@ -85,31 +135,29 @@ export default defineComponent({
             .put(this.baseURL + this.bookID, body, { headers })
             .then(() => {
               // open success notification
-              ElMessage({
-                type: "success",
-                message: "Completely update ID " + this.bookID + "!",
-              });
+              requestMessage("success", "Update", "confirm");
               this.$emit("refresh");
+              this.$emit("close");
+              console.log(body);
             })
             .catch((error) => {
               // open error notification
-              ElMessage({
-                type: "error",
-                message: "Update process failed! Please try again.",
-              });
+              requestMessage("error", "Update", "confirm");
               console.log(error);
             });
         })
         .catch((action: Action) => {
-          ElMessage({
-            type: "info",
-            message:
-              action === "cancel"
-                ? "Update process cancelled!"
-                : "Nothing happen :3",
-          });
+          requestMessage("info", "Update", action);
         });
     },
+  },
+  watch: {
+    runMethod(): void {
+      this.getDataFromParentComp();
+    },
+  },
+  mounted() {
+    this.getDataFromApi();
   },
   // computed: {
   //   msg() {

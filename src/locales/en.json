@@ -2,6 +2,7 @@
   "message": {
     "view_header": "{table} LIST",
     "create_header": "CREATE",
+    "reset_message": "Reset input",
     "create_message": "Create new {table}",
     "update_header": "UPDATE",
     "update_message": "Update {table} with"

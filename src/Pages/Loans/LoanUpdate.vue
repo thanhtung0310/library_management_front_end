@@ -1,18 +1,21 @@
 <template>
   <div class="update-box">
+    <!-- form class = "el-form el-form--default el-form--label-right" -->
+    <!-- button class = "el-button el-button--success is-round" -->
     <div class="box-header">
       <p>
         {{ $t("message.update_message", { table: "loan order" }) }} {{ loanID }}
       </p>
     </div>
     <div class="form">
-      <div class="form-group databox">
+      <div class="el-form-item__content">
         <label>{{ $t("loans.book_id") }}: </label>
         <input
           :value="bookID"
           type="text"
           name="book_id"
           id="book_id"
+          class="el-input__inner"
           placeholder="Please update book ID..."
         />
       </div>
@@ -73,17 +76,19 @@
       </div>
     </div>
   </div>
-</template>>
+</template>
+>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import axios from "axios";
+import { ElMessage, ElMessageBox } from "element-plus";
+import type { Action } from "element-plus";
 
 export default defineComponent({
   name: "publisher_update",
   data() {
     return {
-      // baseURL: "https://localhost:7123/api/loans/",
       input: {
         loanID: this.loanID,
         loan_BookID: this.bookID,
@@ -97,37 +102,37 @@ export default defineComponent({
   },
   props: {
     loanID: {
-      default: 0,
+      default: ref(0),
       type: Number,
     },
     bookID: {
-      default: 0,
+      default: ref(0),
       type: Number,
     },
     branchID: {
-      default: 0,
+      default: ref(0),
       type: Number,
     },
     borrowerID: {
-      default: 0,
+      default: ref(0),
       type: Number,
     },
     loanDate: {
-      default: "",
+      default: ref(""),
       type: String,
     },
     dueDate: {
-      default: "",
+      default: ref(""),
       type: String,
     },
     loanStatus: {
-      default: "",
+      default: ref(""),
       type: String,
     },
     baseURL: {
-      type: String, 
-      default: "",
-    }
+      default: ref(""),
+      type: String,
+    },
   },
   methods: {
     // update new data into database
@@ -147,15 +152,44 @@ export default defineComponent({
         "Content-Type": "application/json",
       };
 
-      // call axios put callback
-      axios
-        .put(this.baseURL + this.loanID, body, { headers })
+      // open update confirmation modal
+      ElMessageBox.confirm("This ID will be updated. Continue?", "Info", {
+        distinguishCancelAndClose: true,
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
+        draggable: true,
+      })
         .then(() => {
-          alert("Success update loan order with id = " + this.loanID);
+          // call axios put callback
+          axios
+            .put(this.baseURL + this.loanID, body, { headers })
+            .then(() => {
+              // open success notification
+              ElMessage({
+                type: "success",
+                message: "Completely update ID " + this.loanID + "!",
+              });
+              this.$emit("refresh");
+              this.$emit("close");
+              console.log(body);
+            })
+            .catch((error) => {
+              // open error notification
+              ElMessage({
+                type: "error",
+                message: "Update process failed! Please try again.",
+              });
+              console.log(error);
+            });
         })
-        .catch((error) => {
-          alert("Cannot connect to server...");
-          console.log(error);
+        .catch((action: Action) => {
+          ElMessage({
+            type: "info",
+            message:
+              action === "cancel"
+                ? "Update process cancelled!"
+                : "Nothing happen :3",
+          });
         });
     },
   },

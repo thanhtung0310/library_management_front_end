@@ -1,57 +1,55 @@
 <template>
-  <div v-if="show" class="insert-box">
-    <div class="box-header">
-      <p>{{ $t("message.create_message", { table: "borrower" }) }}</p>
-    </div>
-    <div class="form">
-      <div class="form-group databox">
+  <div class="insert-box">
+    <el-form :modal="input">
+      <div class="box-header">
+        <p>{{ $t("message.create_message", { table: "borrower" }) }}</p>
+      </div>
+
+      <el-form-item>
         <label>{{ $t("borrowers.borrower_name") }}: </label>
-        <input
+        <el-input
           v-model="input.borrowerName"
           type="text"
-          name="borrower_name"
-          id="borrower_name"
           placeholder="Please enter borrower name..."
         />
-      </div>
-      <div class="form-group databox">
+      </el-form-item>
+      <el-form-item>
         <label>{{ $t("borrowers.borrower_address") }}: </label>
-        <input
+        <el-input
           v-model="input.borrowerAddr"
-          type="text"
-          name="borrower_addr"
-          id="borrower_addr"
+          type="textarea"
           placeholder="Please enter borrower address..."
         />
-      </div>
-      <div class="form-group databox">
+      </el-form-item>
+      <el-form-item>
         <label>{{ $t("borrowers.borrower_number") }}: </label>
-        <input
+        <el-input
           v-model="input.borrowerNum"
           type="text"
-          name="borrower_no"
-          id="borrower_no"
           placeholder="Please enter borrower contact number..."
         />
-      </div>
-      <div class="form-group button">
-        <button type="submit" @click="$emit('close'), createData()">
+      </el-form-item>
+      <el-form-item class="button-group">
+        <el-button type="submit" @click="createData()" round>
           {{ $t("message.create_header") }}
-        </button>
-      </div>
-    </div>
+        </el-button>
+        <el-button type="info" @click="clearData()" round>{{
+          $t("message.reset_message")
+        }}</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "borrower_insert",
   data() {
     return {
-      // baseURL: "https://localhost:7123/api/borrowers/",
       input: {
         borrowerName: null,
         borrowerAddr: null,
@@ -60,11 +58,10 @@ export default defineComponent({
     };
   },
   props: {
-    show: Boolean,
     baseURL: {
-      type: String, 
+      type: String,
       default: "",
-    }
+    },
   },
   methods: {
     // create new borrower in database
@@ -73,12 +70,21 @@ export default defineComponent({
       axios
         .post(this.baseURL, this.input)
         .then(() => {
-          alert("New borrower is created successfully!");
+          // open success notification
+          ElMessage({
+            type: "success",
+            message: "Insert process completed!",
+          });
           this.clearData();
+          this.$emit("refresh");
+          this.$emit("close");
         })
         .catch((error) => {
-          alert("Cannot connect to server...");
-          this.clearData();
+          // open error notification
+          ElMessage({
+            type: "error",
+            message: "Insert process failed! Please try again.",
+          });
           console.log(error);
         });
     },
@@ -91,6 +97,5 @@ export default defineComponent({
   },
 });
 </script>
-
 
 <style src="@/assets/css/insert-style.css"></style>

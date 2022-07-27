@@ -1,41 +1,42 @@
 <template>
-  <div v-if="show" class="insert-box">
-    <div class="box-header">
-      <p>{{ $t("message.create_message", { table: "branch" }) }}</p>
-    </div>
-    <div class="form">
-      <div class="form-group databox">
+  <div class="insert-box">
+    <el-form :model="input">
+      <div class="box-header">
+        <p>{{ $t("message.create_message", { table: "branch" }) }}</p>
+      </div>
+
+      <el-form-item>
         <label>{{ $t("branches.branch_name") }}: </label>
-        <input
+        <el-input
           v-model="input.branchName"
           type="text"
-          name="branch_name"
-          id="branch name"
           placeholder="Please enter branch name..."
         />
-      </div>
-      <div class="form-group databox">
+      </el-form-item>
+      <el-form-item>
         <label>{{ $t("branches.branch_address") }}: </label>
-        <input
+        <el-input
           v-model="input.branchAddr"
-          type="text"
-          name="branch_address"
-          id="branch_address"
+          type="textarea"
           placeholder="Please enter branch address..."
         />
-      </div>
-      <div class="form-group button">
-        <button type="submit" @click="$emit('close'), createData()">
+      </el-form-item>
+      <el-form-item class="button-group">
+        <el-button type="success" @click="createData()" round>
           {{ $t("message.create_header") }}
-        </button>
-      </div>
-    </div>
+        </el-button>
+        <el-button type="info" @click="clearData()" round>{{
+          $t("message.reset_message")
+        }}</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "branch_insert",
@@ -49,11 +50,10 @@ export default defineComponent({
     };
   },
   props: {
-    show: Boolean,
     baseURL: {
-      type: String, 
+      type: String,
       default: "",
-    }
+    },
   },
   methods: {
     // create new branch in database
@@ -62,12 +62,21 @@ export default defineComponent({
       axios
         .post(this.baseURL, this.input)
         .then(() => {
-          alert("New branch is created successfully!");
+          // open success notification
+          ElMessage({
+            type: "success",
+            message: "Insert process completed!",
+          });
           this.clearData();
+          this.$emit("refresh");
+          this.$emit("close");
         })
         .catch((error) => {
-          alert("Cannot connect to server...");
-          this.clearData();
+          // open error notification
+          ElMessage({
+            type: "error",
+            message: "Insert process failed! Please try again.",
+          });
           console.log(error);
         });
     },
@@ -79,6 +88,5 @@ export default defineComponent({
   },
 });
 </script>
-
 
 <style src="@/assets/css/insert-style.css"></style>

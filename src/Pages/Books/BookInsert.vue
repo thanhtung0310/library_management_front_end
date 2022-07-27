@@ -5,36 +5,49 @@
         <p>{{ $t("message.create_message", { table: "book" }) }}</p>
       </div>
 
-      <el-form-item prop="title">
+      <el-form-item prop="name">
         <label>{{ $t("books.book_title") }}: </label>
         <el-input
           v-model="input.bookTitle"
+          type="text"
           placeholder="Please enter book title..."
         />
       </el-form-item>
 
-      <el-form-item prop="ID">
+      <!-- el-select el-option data=publisher_list  -->
+      <el-form-item prop="id">
         <label>{{ $t("books.publisher_id") }}: </label>
-        <el-input
-          v-model="input.book_PublisherID"
-          placeholder="Please enter publisher ID..."
-        />
-        <!-- <el-select v-model="input.book_PublisherID">
-          <el-option default>{{ $t("books.publisher_list") }}</el-option>
-          <el-option value="1">Alfred A. Knopf</el-option>
-          <el-option value="2">Justin Bieber</el-option>
-          <el-option value="3">The Rock</el-option>
-          <el-option value="4">J. K. Rowling</el-option>
-        </el-select> -->
+        <el-select
+          v-model="publisher_id"
+          placeholder="Select book's publisher"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="item in publisher_list"
+            :key="item.publisherID"
+            :label="item.publisherName"
+            :value="item.publisherID"
+          >
+            <span style="float: left">{{ item.publisherName }}</span>
+            <span
+              style="
+                float: right;
+                color: var(--el-text-color-secondary);
+                font-size: 13px;
+              "
+              >{{ item.publisherID }}</span
+            >
+          </el-option>
+        </el-select>
       </el-form-item>
 
       <el-form-item class="button-group">
-        <el-button type="success" @click="$emit('close'), createData()" round>
+        <el-button type="success" @click="createData()" round>
           {{ $t("message.create_header") }}</el-button
         >
-        <el-button type="info" @click="clearData()" round
-          >Reset input</el-button
-        >
+        <el-button type="info" @click="clearData()" round>{{
+          $t("message.reset_message")
+        }}</el-button>
       </el-form-item>
 
       <el-form-item class="link">
@@ -49,21 +62,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import axios from "axios";
-import { ElMessage, FormInstance, FormRules } from "element-plus";
+import { FormInstance, FormRules } from "element-plus";
+import { requestMessage, serverNotification } from "@/axios-functions";
 
 export default defineComponent({
   name: "book_insert",
   data() {
     return {
-      // baseURL: "https://localhost:7123/api/books/",
+      publisher_baseURL: "https://localhost:7123/api/publishers/",
+      publisher_list: null,
+      publisher_id: ref(""),
       input: {
-        bookTitle: null,
-        book_PublisherID: null,
+        bookTitle: "",
+        book_PublisherID: "",
       },
       rules: reactive<FormRules>({
-        title: [
+        name: [
           {
             required: true,
             message: "Please input book title",
@@ -79,7 +95,7 @@ export default defineComponent({
         ID: [
           {
             required: true,
-            message: "Please input book title",
+            message: "Please choose publisher",
             trigger: "blur",
           },
           {
@@ -93,33 +109,48 @@ export default defineComponent({
     };
   },
   props: {
-    show: Boolean,
     baseURL: {
       type: String,
       default: "",
     },
   },
   methods: {
+    // get publisher list
+    getDataFromApi(): void {
+      // call axios get callback
+      axios
+        .get(this.publisher_baseURL)
+        .then((response) => {
+          if (response.data != null) {
+            this.publisher_list = response.data;
+          } else {
+            // open warning notification
+            serverNotification("warning");
+          }
+        })
+        .catch((error) => {
+          // open error notification
+          serverNotification("error");
+          console.log(error);
+        });
+    },
     // create new book in database
     createData(): void {
+      //
+      this.input.book_PublisherID = this.publisher_id;
       // call axios post callback
       axios
         .post(this.baseURL, this.input)
         .then(() => {
           // open success notification
-          ElMessage({
-            type: "success",
-            message: "Insert process completed!",
-          });
+          requestMessage("success", "Insert", "confirm");
           this.clearData();
           this.$emit("refresh");
+          this.$emit("close");
         })
         .catch((error) => {
           // open error notification
-          ElMessage({
-            type: "error",
-            message: "Insert process failed! Please try again.",
-          });
+          requestMessage("error", "Insert", "confirm");
           console.log(error);
         });
     },
@@ -141,9 +172,15 @@ export default defineComponent({
     },
     // clear input data
     clearData(): void {
-      this.input.bookTitle = null;
-      this.input.book_PublisherID = null;
+      this.input = {
+        bookTitle: "",
+        book_PublisherID: "",
+      };
+      this.publisher_id = "";
     },
+  },
+  created() {
+    this.getDataFromApi();
   },
 });
 </script>

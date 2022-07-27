@@ -1,92 +1,90 @@
 <template>
   <el-form
-      ref="ruleFormRef"
-      :model="ruleForm"
-      :rules="rules"
-      label-width="140px"
-      :label-position="labelPosition"
-      class="demo-ruleForm"
-      :size="formSize"
-      status-icon
-    >
-      <el-form-item label="Book title" prop="name">
-        <el-input v-model="ruleForm.name" />
-      </el-form-item>
+    ref="ruleFormRef"
+    :model="ruleForm"
+    :rules="rules"
+    label-width="140px"
+    :label-position="labelPosition"
+    class="demo-ruleForm"
+    :size="formSize"
+    status-icon
+  >
+    <el-form-item label="Book title" prop="name">
+      <el-input v-model="ruleForm.name" />
+    </el-form-item>
 
-      <el-form-item label="Publisher name" prop="count">
-        <el-select-v2
-          v-model="ruleForm.count"
-          placeholder="Choose correct publisher"
-          :options="options"
-          style="width: 50%"
-        />
-      </el-form-item>
-      
-      <el-form-item label="Activity time" required>
-        <el-col :span="10">
-          <el-form-item prop="date1">
-            <el-date-picker
-              v-model="ruleForm.date1"
-              type="date"
-              label="Pick a date"
-              placeholder="Pick a date"
-              style="width: 80%"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col class="text-center" :span="2">
-          <span class="text-gray-500">-</span>
-        </el-col>
-        <el-col :span="10">
-          <el-form-item prop="date2">
-            <el-time-picker
-              v-model="ruleForm.date2"
-              label="Pick a time"
-              placeholder="Pick a time"
-              style="width: 80%"
-            />
-          </el-form-item>
-        </el-col>
-      </el-form-item>
-      <el-form-item label="Instant delivery" prop="delivery">
-        <el-switch v-model="ruleForm.delivery" />
-      </el-form-item>
-      <el-form-item label="Activity type" prop="type">
-        <el-checkbox-group v-model="ruleForm.type">
-          <el-checkbox label="Online activities" name="type" />
-          <el-checkbox label="Promotion activities" name="type" />
-          <el-checkbox label="Offline activities" name="type" />
-          <el-checkbox label="Simple brand exposure" name="type" />
-        </el-checkbox-group>
-      </el-form-item>
+    <el-form-item label="Publisher name" prop="count">
+      <el-select-v2
+        v-model="ruleForm.count"
+        placeholder="Choose correct publisher"
+        :options="options"
+        style="width: 50%"
+      />
+    </el-form-item>
 
-      <el-form-item label="Resources" prop="resource">
-        <el-radio-group v-model="ruleForm.resource">
-          <el-radio label="Sponsorship" />
-          <el-radio label="Venue" />
-        </el-radio-group>
-      </el-form-item>
+    <el-form-item label="Activity time" required>
+      <el-col :span="10">
+        <el-form-item prop="date1">
+          <el-date-picker
+            v-model="ruleForm.date1"
+            type="date"
+            label="Pick a date"
+            placeholder="Pick a date"
+            style="width: 80%"
+          />
+        </el-form-item>
+      </el-col>
+      <el-col class="text-center" :span="2">
+        <span class="text-gray-500">-</span>
+      </el-col>
+      <el-col :span="10">
+        <el-form-item prop="date2">
+          <el-time-picker
+            v-model="ruleForm.date2"
+            label="Pick a time"
+            placeholder="Pick a time"
+            style="width: 80%"
+          />
+        </el-form-item>
+      </el-col>
+    </el-form-item>
+    <el-form-item label="Instant delivery" prop="delivery">
+      <el-switch v-model="ruleForm.delivery" />
+    </el-form-item>
+    <el-form-item label="Activity type" prop="type">
+      <el-checkbox-group v-model="ruleForm.type">
+        <el-checkbox label="Online activities" name="type" />
+        <el-checkbox label="Promotion activities" name="type" />
+        <el-checkbox label="Offline activities" name="type" />
+        <el-checkbox label="Simple brand exposure" name="type" />
+      </el-checkbox-group>
+    </el-form-item>
 
-      <el-form-item label="Activity form" prop="desc">
-        <el-input v-model="ruleForm.desc" type="textarea" />
-      </el-form-item>
+    <el-form-item label="Resources" prop="resource">
+      <el-radio-group v-model="ruleForm.resource">
+        <el-radio label="Sponsorship" />
+        <el-radio label="Venue" />
+      </el-radio-group>
+    </el-form-item>
 
-      <el-form-item>
-        <el-button type="primary" @click="submitForm(ruleFormRef)"
-          >Create</el-button
-        >
-        <el-button @click="resetForm(ruleFormRef)">Reset input</el-button>
-      </el-form-item>
-    </el-form>
+    <el-form-item label="Activity form" prop="desc">
+      <el-input v-model="ruleForm.desc" type="textarea" />
+    </el-form-item>
+
+    <el-form-item>
+      <el-button type="primary" @click="submitForm(ruleFormRef)"
+        >Create</el-button
+      >
+      <el-button @click="resetForm(ruleFormRef)">{{
+        $t("message.reset_message")
+      }}</el-button>
+    </el-form-item>
+  </el-form>
 </template>
-
 
 <script lang="ts">
 import { defineComponent, ref, reactive } from "vue";
-import {
-  FormInstance,
-  FormRules,
-} from "element-plus";
+import { FormInstance, FormRules } from "element-plus";
 
 export default defineComponent({
   name: "elform-template",

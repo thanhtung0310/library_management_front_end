@@ -1,85 +1,133 @@
 <template>
-  <div v-if="show" class="insert-box">
-    <div class="box-header">
-      <p>{{ $t("message.create_message", { table: "author" }) }}</p>
-    </div>
-    <div class="form">
-      <div class="form-group databox">
-        <label>{{ $t("authors.book_id") }}: </label>
-        <input
-          v-model="input.author_BookID"
-          type="text"
-          name="book_id"
-          id="book_id"
-          placeholder="Please enter book ID..."
-        />
+  <div class="insert-box">
+    <el-form :modal="input">
+      <div class="box-header">
+        <p>{{ $t("message.create_message", { table: "author" }) }}</p>
       </div>
-      <div class="form-group databox">
+
+      <el-form-item>
+        <label>{{ $t("authors.book_id") }}: </label>
+        <el-select
+          v-model="book_id"
+          placeholder="Select book"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="item in book_list"
+            :key="item.bookID"
+            :label="item.bookTitle"
+            :value="item.bookID"
+          >
+            <span style="float: left">{{ item.bookTitle }}</span>
+            <span
+              style="
+                float: right;
+                color: var(--el-text-color-secondary);
+                font-size: 13px;
+              "
+              >{{ item.bookID }}</span
+            >
+          </el-option>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item>
         <label>{{ $t("authors.author_name") }}: </label>
-        <input
+        <el-input
           v-model="input.authorName"
           type="text"
-          name="author_name"
-          id="author_name"
           placeholder="Please enter author name..."
         />
-      </div>
-      <div class="form-group button">
-        <button type="submit" @click="$emit('close'), createData()">
+      </el-form-item>
+
+      <el-form-item class="button-group">
+        <el-button type="success" @click="createData()" round>
           {{ $t("message.create_header") }}
-        </button>
-      </div>
-    </div>
+        </el-button>
+        <el-button type="info" @click="clearData()" round>{{
+          $t("message.reset_message")
+        }}</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import axios from "axios";
+import { requestMessage, serverNotification } from "@/axios-functions";
 
 export default defineComponent({
   name: "author_insert",
   data() {
     return {
-      // baseURL: "https://localhost:7123/api/authors/",
-      new_data: null,
+      book_baseURL: "https://localhost:7123/api/books/",
+      book_list: null,
+      book_id: ref(""),
       input: {
-        author_BookID: null,
-        authorName: null,
+        author_BookID: "",
+        authorName: "",
       },
     };
   },
   props: {
-    show: Boolean,
     baseURL: {
-      type: String, 
+      type: String,
       default: "",
-    }
+    },
   },
   methods: {
+    // get publisher list
+    getDataFromApi(): void {
+      // call axios get callback
+      axios
+        .get(this.book_baseURL)
+        .then((response) => {
+          if (response.data != null) {
+            this.book_list = response.data;
+          } else {
+            // open warning notification
+            serverNotification("warning");
+          }
+        })
+        .catch((error) => {
+          // open error notification
+          serverNotification("error");
+          console.log(error);
+        });
+    },
     // create new author in database
     createData(): void {
+      //
+      this.input.author_BookID = this.book_id;
       // call axios post callback
       axios
         .post(this.baseURL, this.input)
         .then(() => {
-          alert("New author is created successfully!");
+          // open success notification
+          requestMessage("success", "Insert", "confirm");
           this.clearData();
+          this.$emit("refresh");
+          this.$emit("close");
         })
         .catch((error) => {
-          alert("Cannot connect to server...");
-          this.clearData();
+          // open error notification
+          requestMessage("error", "Insert", "confirm");
           console.log(error);
         });
     },
     // clear input data
     clearData(): void {
-      this.input.author_BookID = null;
-      this.input.authorName = null;
+      this.input = {
+        author_BookID: "",
+        authorName: "",
+      };
     },
+  },
+  created() {
+    this.getDataFromApi();
   },
 });
 </script>
-
 
 <style src="@/assets/css/insert-style.css"></style>

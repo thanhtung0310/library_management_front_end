@@ -1,57 +1,55 @@
 <template>
-  <div v-if="show" class="insert-box">
-    <div class="box-header">
-      <p>{{ $t("message.create_message", { table: "publisher" }) }}</p>
-    </div>
-    <div class="form">
-      <div class="form-group databox">
+  <div class="insert-box">
+    <el-form :model="input">
+      <div class="box-header">
+        <p>{{ $t("message.create_message", { table: "publisher" }) }}</p>
+      </div>
+
+      <el-form-item>
         <label>{{ $t("publishers.publisher_name") }}: </label>
-        <input
+        <el-input
           v-model="input.publisherName"
           type="text"
-          name="publisher_name"
-          id="publisher_name"
           placeholder="Please enter publisher name..."
         />
-      </div>
-      <div class="form-group databox">
+      </el-form-item>
+      <el-form-item>
         <label>{{ $t("publishers.publisher_address") }}: </label>
-        <input
+        <el-input
           v-model="input.publisherAddr"
-          type="text"
-          name="publisher_addr"
-          id="publisher_addr"
+          type="textarea"
           placeholder="Please enter publisher address..."
         />
-      </div>
-      <div class="form-group databox">
+      </el-form-item>
+      <el-form-item>
         <label>{{ $t("publishers.publisher_number") }}: </label>
-        <input
+        <el-input
           v-model="input.publisherNum"
           type="text"
-          name="publisher_no"
-          id="publisher_no"
           placeholder="Please enter publisher contact number..."
         />
-      </div>
-      <div class="form-group button">
-        <button type="submit" @click="$emit('close'), createData()">
+      </el-form-item>
+      <el-form-item class="button-group">
+        <el-button type="success" @click="createData()">
           {{ $t("message.create_header") }}
-        </button>
-      </div>
-    </div>
+        </el-button>
+      </el-form-item>
+      <el-button type="info" @click="clearData()" round>{{
+        $t("message.reset_message")
+      }}</el-button>
+    </el-form>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "publisher_insert",
   data() {
     return {
-      // baseURL: "https://localhost:7123/api/publishers/",
       input: {
         publisherName: null,
         publisherAddr: null,
@@ -60,11 +58,10 @@ export default defineComponent({
     };
   },
   props: {
-    show: Boolean,
     baseURL: {
-      type: String, 
+      type: String,
       default: "",
-    }
+    },
   },
   methods: {
     // create new publisher in database
@@ -73,12 +70,21 @@ export default defineComponent({
       axios
         .post(this.baseURL, this.input)
         .then(() => {
-          alert("New publisher is created successfully!");
+          // open success notification
+          ElMessage({
+            type: "success",
+            message: "Insert process completed!",
+          });
           this.clearData();
+          this.$emit("refresh");
+          this.$emit("close");
         })
         .catch((error) => {
-          alert("Cannot connect to server...");
-          this.clearData();
+          // open error notification
+          ElMessage({
+            type: "error",
+            message: "Insert process failed! Please try again.",
+          });
           console.log(error);
         });
     },
@@ -91,6 +97,5 @@ export default defineComponent({
   },
 });
 </script>
-
 
 <style src="@/assets/css/insert-style.css"></style>

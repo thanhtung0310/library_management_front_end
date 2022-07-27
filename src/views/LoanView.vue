@@ -1,22 +1,21 @@
 <template>
   <div class="loans">
     <h1>{{ $t("message.view_header", { table: "LOAN ORDER" }) }}</h1>
-    <div class="insert-div" id="insert-div">
-      <button
-        id="btnInsertPage"
-        @click="goToInsertPage(), (showModal = !showModal)"
-      >
-        {{ $t("message.create_message", { table: "loan order" }) }}
-      </button>
-      <router-view 
-        :show="showModal" 
-        :baseURL="baseURL" 
-        @close="showModal = false"
-      ></router-view>
+
+    <el-button @click="showInsertModal()" round>
+      {{ $t("message.create_message", { table: "loan order" }) }}
+    </el-button>
+
+    <div class="insert-div" id="insert-div" style="display: none">
+      <InsertModal
+        :baseURL="baseURL"
+        @refresh="getDataFromApi"
+        @close="close('insert-div')"
+      ></InsertModal>
     </div>
 
     <div class="update-div" id="update-div" style="display: none">
-      <Update
+      <UpdateModal
         :loanID="output.loanID"
         :bookID="output.loan_BookID"
         :branchID="output.loan_BranchID"
@@ -25,7 +24,9 @@
         :dueDate="output.dueDate"
         :loanStatus="output.loanStatus"
         :baseURL="baseURL"
-      ></Update>
+        @refresh="getDataFromApi"
+        @close="close('update-div')"
+      ></UpdateModal>
     </div>
 
     <div class="table-view">
@@ -70,12 +71,24 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import axios from "axios";
-import Update from "@/pages/Loans/LoanUpdate.vue";
+import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
+import type { Action } from "element-plus";
+import UpdateModal from "@/pages/Loans/LoanUpdate.vue";
+import InsertModal from "@/pages/Loans/LoanInsert.vue";
+import {
+  scrollToAnchor,
+  showNCloseModal,
+  closeModal,
+  serverNotification,
+  requestMessage,
+  showNKeepModal,
+} from "@/axios-functions";
 
 export default defineComponent({
   name: "LoanView",
   components: {
-    Update,
+    UpdateModal,
+    InsertModal,
   },
   data() {
     return {
@@ -90,17 +103,12 @@ export default defineComponent({
         dueDate: String,
         loanStatus: String,
       },
-      showModal: false,
     };
   },
   methods: {
-    // call to insert page
-    goToInsertPage() {
-      this.$router.push("/loans/insert");
-    },
     // go to id div
     scrollToAnchor(element: string): void {
-      location.hash = "#" + element;
+      return scrollToAnchor(element);
     },
     // get datable from database
     getDataFromApi(): void {
@@ -108,43 +116,71 @@ export default defineComponent({
       axios
         .get(this.baseURL)
         .then((response) => {
-          if (response.data != null) this.loans = response.data;
-          else alert("No data is loaded into table!");
+          if (response.data != null) {
+            this.loans = response.data;
+            // open success notification
+            serverNotification("success");
+          } else {
+            // open warning notification
+            serverNotification("warning");
+          }
         })
         .catch((error) => {
-          alert("Cannot connect to server...");
+          // open error notification
+          serverNotification("error");
           console.log(error);
         });
     },
+    // show insert modal
+    showInsertModal(): void {
+      // display update modal
+      return showNCloseModal("insert-div", "update-div");
+    },
+    // close update modal
+    close(element: string): void {
+      return closeModal(element);
+    },
     // pass data from parent comp to child comp
-    passDatatoUpdatePage(model: undefined): void {
+    passDatatoUpdatePage(model: null): void {
       // parsing data into Json format
       this.output = JSON.parse(JSON.stringify(model));
 
       // display update modal
-      const updateDiv = document.getElementById("update-div");
-      if (updateDiv != null) {
-        if (updateDiv.style.display == "none")
-          updateDiv.style.display = "block";
-        else if (updateDiv.style.display == "block")
-          updateDiv.style.display = "block";
-        else updateDiv.style.display = "none";
-      }
+      return showNKeepModal("update-div", "insert-div");
     },
     // delete data from datatable with id
     deleteData(model: undefined): void {
       // parsing data into Json format
       this.output = JSON.parse(JSON.stringify(model));
 
-      // call axios delete callback
-      axios
-        .delete(this.baseURL + this.output.loanID)
+      // open delete confirmation modal
+      ElMessageBox.confirm(
+        "This row data will be deleted. Continue?",
+        "Warning",
+        {
+          distinguishCancelAndClose: true,
+          confirmButtonText: "OK",
+          cancelButtonText: "Cancel",
+          draggable: true,
+        }
+      )
         .then(() => {
-          alert("Success delete loan order with id = " + this.output.loanID);
+          // call axios delete callback
+          axios
+            .delete(this.baseURL + this.output.loanID)
+            .then(() => {
+              // open success message
+              requestMessage("success", "Delete", "confirm");
+              this.getDataFromApi();
+            })
+            .catch((error) => {
+              // open error message
+              requestMessage("error", "Delete", "confirm");
+              console.log(error);
+            });
         })
-        .catch((error) => {
-          alert("Cannot connect to server...");
-          console.log(error);
+        .catch((action: Action) => {
+          requestMessage("info", "Delete", action);
         });
     },
   },

@@ -44,12 +44,9 @@ export default defineComponent({
     navSlide(): void {
       let burger = document.querySelector(".burger");
       let nav = document.querySelector(".nav-links");
-      let isActive = false;
       burger?.addEventListener("click", () => {
         // Toggle nav
         nav?.classList.toggle("nav-active");
-        // Toggle nav active status to true/false
-        isActive = !isActive;
       });
     },
   },

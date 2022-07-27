@@ -2,6 +2,7 @@
   "message": {
     "view_header": "LISTE DES {table}",
     "create_header": "CRÉER",
+    "reset_message": "Entrée de réinitialisation",
     "create_message": "Créer un nouveau {table}",
     "update_header": "RÉVISE",
     "update_message": "Révise {table} avec"
@@ -26,6 +27,7 @@
     "authors": "Auteurs",
     "publishers": "Éditeurs",
     "borrowers": "Emprunteurs",
+    "branches": "Branches",
     "loans": "Prêts",
     "about": "Sur",
     "terms": "Termes & Conditions",
