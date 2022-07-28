@@ -1,25 +1,24 @@
 <template>
   <div class="insert-box">
-    <el-form :model="input" :rules="rules">
+    <el-form ref="ruleFormRef" :rules="rules">
       <div class="box-header">
         <p>{{ $t("message.create_message", { table: "book" }) }}</p>
       </div>
 
-      <el-form-item prop="name">
+      <el-form-item prop="title">
         <label>{{ $t("books.book_title") }}: </label>
         <el-input
-          v-model="input.bookTitle"
+          v-model="ruleForm.title"
           type="text"
           placeholder="Please enter book title..."
         />
       </el-form-item>
 
-      <!-- el-select el-option data=publisher_list  -->
       <el-form-item prop="id">
         <label>{{ $t("books.publisher_id") }}: </label>
         <el-select
-          v-model="publisher_id"
-          placeholder="Select book's publisher"
+          v-model="ruleForm.id"
+          placeholder="Select publisher"
           style="width: 100%"
         >
           <el-option
@@ -64,22 +63,26 @@
 <script lang="ts">
 import { defineComponent, reactive, ref } from "vue";
 import axios from "axios";
-import { FormInstance, FormRules } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 import { requestMessage, serverNotification } from "@/axios-functions";
 
 export default defineComponent({
   name: "book_insert",
   data() {
     return {
+      ruleFormRef: ref<FormInstance>(),
       publisher_baseURL: "https://localhost:7123/api/publishers/",
       publisher_list: null,
-      publisher_id: ref(""),
       input: {
-        bookTitle: "",
-        book_PublisherID: "",
+        bookTitle: ref(""),
+        book_PublisherID: ref(""),
       },
+      ruleForm: reactive({
+        title: "",
+        id: "",
+      }),
       rules: reactive<FormRules>({
-        name: [
+        title: [
           {
             required: true,
             message: "Please input book title",
@@ -87,22 +90,16 @@ export default defineComponent({
           },
           {
             min: 3,
-            max: 5,
-            message: "Length should be 3 to 5",
+            max: 100,
+            message: "Length should between 3 and 100",
             trigger: "blur",
           },
         ],
-        ID: [
+        id: [
           {
             required: true,
-            message: "Please choose publisher",
-            trigger: "blur",
-          },
-          {
-            min: 3,
-            max: 5,
-            message: "Length should be 3 to 5",
-            trigger: "blur",
+            message: "Please select publisher",
+            trigger: "change",
           },
         ],
       }),
@@ -121,12 +118,12 @@ export default defineComponent({
       axios
         .get(this.publisher_baseURL)
         .then((response) => {
-          if (response.data != null) {
-            this.publisher_list = response.data;
-          } else {
+          if (!response) {
             // open warning notification
             serverNotification("warning");
+            return;
           }
+          this.publisher_list = response.data;
         })
         .catch((error) => {
           // open error notification
@@ -137,7 +134,8 @@ export default defineComponent({
     // create new book in database
     createData(): void {
       //
-      this.input.book_PublisherID = this.publisher_id;
+      this.input.bookTitle = this.ruleForm.title;
+      this.input.book_PublisherID = this.ruleForm.id;
       // call axios post callback
       axios
         .post(this.baseURL, this.input)
@@ -154,29 +152,26 @@ export default defineComponent({
           console.log(error);
         });
     },
-    // submit form
-    submitForm(formEl: FormInstance | undefined) {
-      if (!formEl) return;
-      formEl.validate((valid, fields) => {
-        if (valid) {
-          console.log("submit!");
-        } else {
-          console.log("error submit!", fields);
-        }
-      });
-    },
-    // reset form input
-    resetForm(formEl: FormInstance | undefined) {
-      if (!formEl) return;
-      formEl.resetFields();
-    },
     // clear input data
     clearData(): void {
       this.input = {
         bookTitle: "",
         book_PublisherID: "",
       };
-      this.publisher_id = "";
+    },
+    // submit form
+    submitForm(formEl: FormInstance | undefined) {
+      console.log(formEl);
+      if (!formEl) return;
+      formEl.validate((valid, fields) => {
+        if (!valid) {
+          // open error notification
+          requestMessage("error", "Insert", "confirm");
+          console.log("error submit!", fields);
+          return;
+        }
+        this.createData();
+      });
     },
   },
   created() {

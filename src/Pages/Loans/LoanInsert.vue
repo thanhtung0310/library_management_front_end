@@ -1,17 +1,34 @@
 <template>
   <div class="insert-box">
-    <el-form :modal="input" :rules="rules">
+    <el-form ref="ruleFormRef" :modal="input" :rules="rules">
       <div class="box-header">
         <p>{{ $t("message.create_message", { table: "loan order" }) }}</p>
       </div>
 
       <el-form-item prop="id1">
         <label>{{ $t("loans.book_id") }}: </label>
-        <el-input
+        <el-select
           v-model="input.loan_BookID"
-          type="number"
-          placeholder="Please scan book..."
-        />
+          placeholder="Select book"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="item in book_list"
+            :key="item.bookID"
+            :label="item.bookTitle"
+            :value="item.bookID"
+          >
+            <span style="float: left">{{ item.bookTitle }}</span>
+            <span
+              style="
+                float: right;
+                color: var(--el-text-color-secondary);
+                font-size: 13px;
+              "
+              >{{ item.bookID }}</span
+            >
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item class="link">
         <router-link to="/books/insert">{{
@@ -22,7 +39,7 @@
       <el-form-item prop="id2">
         <label>{{ $t("loans.branch_id") }}: </label>
         <el-select
-          v-model="branch_id"
+          v-model="input.loan_BranchID"
           placeholder="Select branch"
           style="width: 100%"
         >
@@ -52,11 +69,28 @@
 
       <el-form-item prop="id3">
         <label>{{ $t("loans.borrower_id") }}: </label>
-        <el-input
+        <el-select
           v-model="input.loan_BorrowerID"
-          type="text"
-          placeholder="Please enter borrower ID..."
-        />
+          placeholder="Select borrower"
+          style="width: 100%"
+        >
+          <el-option
+            v-for="item in borrower_list"
+            :key="item.borrowerID"
+            :label="item.borrowerName"
+            :value="item.borrowerID"
+          >
+            <span style="float: left">{{ item.borrowerName }}</span>
+            <span
+              style="
+                float: right;
+                color: var(--el-text-color-secondary);
+                font-size: 13px;
+              "
+              >{{ item.borrowerID }}</span
+            >
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item class="link">
         <router-link to="/borrowers/insert">{{
@@ -76,18 +110,15 @@
 
       <!-- lỗi style - không hiện button -->
       <el-form-item prop="status">
-        <label>{{ $t("loans.loan_status") }}: </label> <br />
-        <el-switch
-          v-model="trueValue"
-          class="mb-2"
-          style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
-          active-text="In Progress"
-          inactive-text="Done"
-        />
+        <label>{{ $t("loans.loan_status") }}: </label>
+        <el-radio-group v-model="input.loanStatus">
+          <el-radio label="In Progress" />
+          <el-radio label="Done" />
+        </el-radio-group>
       </el-form-item>
 
       <el-form-item class="button-group">
-        <el-button type="success" @click="createData()" round>
+        <el-button type="success" @click="updateData()" round>
           {{ $t("message.create_header") }}
         </el-button>
         <el-button type="info" @click="clearData()" round>{{
@@ -108,43 +139,65 @@ export default defineComponent({
   name: "loan_insert",
   data() {
     return {
-      branch_baseURL: "https://localhost:7123/api/branches/",
+      ruleFormRef: ref<FormInstance>(),
+      book_baseURL: "https://localhost:7123/api/branches/",
+      book_list: null,
+      branch_baseURL: "https://localhost:7123/api/books/",
       branch_list: null,
-      branch_id: ref(""),
-      trueValue: ref(true),
+      borrower_baseURL: "https://localhost:7123/api/borrowers/",
+      borrower_list: null,
       input: {
-        loan_BookID: "",
-        loan_BranchID: "",
-        loan_BorrowerID: "",
-        loanDate: "",
-        dueDate: "",
-        loanStatus: "",
+        loan_BookID: ref(""),
+        loan_BranchID: ref(""),
+        loan_BorrowerID: ref(""),
+        loanDate: ref(""),
+        dueDate: ref(""),
+        loanStatus: ref(""),
       },
       rules: reactive<FormRules>({
-        name: [
+        id1: [
           {
             required: true,
-            message: "Please input book title",
-            trigger: "blur",
-          },
-          {
-            min: 3,
-            max: 5,
-            message: "Length should be 3 to 5",
-            trigger: "blur",
+            message: "Please select book",
+            trigger: "change",
           },
         ],
-        ID: [
+        id2: [
           {
             required: true,
-            message: "Please choose publisher",
-            trigger: "blur",
+            message: "Please select branch",
+            trigger: "change",
           },
+        ],
+        id3: [
           {
-            min: 3,
-            max: 5,
-            message: "Length should be 3 to 5",
-            trigger: "blur",
+            required: true,
+            message: "Please select borrower",
+            trigger: "change",
+          },
+        ],
+        date1: [
+          {
+            required: true,
+            type: "date",
+            message: "Please pick loan date (today)",
+            trigger: "change",
+          },
+        ],
+        date2: [
+          {
+            required: true,
+            type: "date",
+            message: "Please pick due date (a month later)",
+            trigger: "change",
+          },
+        ],
+        status: [
+          {
+            required: true,
+            type: "boolean",
+            message: "Please select order status",
+            trigger: "change",
           },
         ],
       }),
@@ -159,7 +212,24 @@ export default defineComponent({
   methods: {
     // get branch list
     getDataFromApi(): void {
-      // call axios get callback
+      // call axios get callback - book
+      axios
+        .get(this.book_baseURL)
+        .then((response) => {
+          if (response.data != null) {
+            this.book_list = response.data;
+          } else {
+            // open warning notification
+            serverNotification("warning");
+          }
+        })
+        .catch((error) => {
+          // open error notification
+          serverNotification("error");
+          console.log(error);
+        });
+
+      // call axios get callback - branch
       axios
         .get(this.branch_baseURL)
         .then((response) => {
@@ -175,11 +245,26 @@ export default defineComponent({
           serverNotification("error");
           console.log(error);
         });
+
+      // call axios get callback - borrower
+      axios
+        .get(this.borrower_baseURL)
+        .then((response) => {
+          if (response.data != null) {
+            this.borrower_list = response.data;
+          } else {
+            // open warning notification
+            serverNotification("warning");
+          }
+        })
+        .catch((error) => {
+          // open error notification
+          serverNotification("error");
+          console.log(error);
+        });
     },
     // create new loan order in database
     createData(): void {
-      //
-      this.input.loan_BranchID = this.branch_id;
       // call axios post callback
       axios
         .post(this.baseURL, this.input)
@@ -206,6 +291,19 @@ export default defineComponent({
         dueDate: "",
         loanStatus: "",
       };
+    },
+    // submit form
+    submitForm(formEl: FormInstance | undefined) {
+      if (!formEl) return;
+      formEl.validate((valid, fields) => {
+        if (valid) {
+          this.createData();
+        } else {
+          // open error notification
+          requestMessage("error", "Insert", "confirm");
+          console.log("error submit!", fields);
+        }
+      });
     },
   },
   created() {

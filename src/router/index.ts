@@ -7,7 +7,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/shared/HomeView.vue')
   },
   {
-    path: '/log-in',
+    path: '/',
     name: 'log-in',
     component: () => import('@/pages/Users/Log-In.vue'),
   },

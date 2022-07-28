@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div class="update-box">
     <el-form>
@@ -7,9 +6,10 @@
           {{ $t("message.update_message", { table: "book" }) }} {{ bookID }}
         </p>
       </div>
+
       <el-form-item>
         <label>{{ $t("books.book_title") }}: </label>
-        <el-input v-model="bookTitle_value" type="text" id="book_title" />
+        <el-input v-model="bookTitle_value" type="text" />
       </el-form-item>
 
       <el-form-item>
@@ -79,7 +79,7 @@ export default defineComponent({
       type: Number,
     },
     baseURL: {
-      default: ref(""),
+      default: "",
       type: String,
     },
     runMethod: Boolean,
@@ -88,7 +88,6 @@ export default defineComponent({
     getDataFromParentComp(): void {
       this.bookTitle_value = this.bookTitle;
       this.publisherID_value = this.publisherID;
-      console.log(this.bookTitle_value, this.publisherID_value);
     },
     // get publisher list
     getDataFromApi(): void {
@@ -96,12 +95,12 @@ export default defineComponent({
       axios
         .get(this.publisher_baseURL)
         .then((response) => {
-          if (response.data != null) {
-            this.publisher_list = response.data;
-          } else {
+          if (!response) {
             // open warning notification
             serverNotification("warning");
+            return;
           }
+          this.publisher_list = response.data;
         })
         .catch((error) => {
           // open error notification
@@ -138,7 +137,6 @@ export default defineComponent({
               requestMessage("success", "Update", "confirm");
               this.$emit("refresh");
               this.$emit("close");
-              console.log(body);
             })
             .catch((error) => {
               // open error notification

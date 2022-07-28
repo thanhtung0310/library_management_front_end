@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { Action, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
+import { ElMessage, ElNotification } from 'element-plus'
+import type { Action } from 'element-plus'
 
 const baseUrl = 'https://localhost:7123/'
 

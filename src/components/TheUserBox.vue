@@ -9,7 +9,7 @@
     <div class="user_options">
       <ul>
         <li>
-          <router-link to="/log-in">{{ $t("user_box.log-in") }}</router-link>
+          <router-link to="/">{{ $t("user_box.log-in") }}</router-link>
         </li>
         <li>
           <router-link to="/log-out">{{ $t("user_box.log-out") }}</router-link>
@@ -26,7 +26,20 @@
 
 .user_box:hover .user_options {
   display: block;
+  position: absolute;
+  top: 60px;
+  height: 9vh;
+  margin-left: -30px;
 }
+
+.user_box .user_options ul {
+  list-style: none;
+}
+
+.user_box .user_options ul li a {
+  text-decoration: none;
+}
+
 .avatar img {
   height: 26px;
   width: 26px;

@@ -1,11 +1,11 @@
 <template>
   <div class="insert-box">
-    <el-form :model="input">
+    <el-form ref="ruleFormRef" :model="input" :rules="rules">
       <div class="box-header">
         <p>{{ $t("message.create_message", { table: "branch" }) }}</p>
       </div>
 
-      <el-form-item>
+      <el-form-item prop="name">
         <label>{{ $t("branches.branch_name") }}: </label>
         <el-input
           v-model="input.branchName"
@@ -13,7 +13,8 @@
           placeholder="Please enter branch name..."
         />
       </el-form-item>
-      <el-form-item>
+
+      <el-form-item prop="addr">
         <label>{{ $t("branches.branch_address") }}: </label>
         <el-input
           v-model="input.branchAddr"
@@ -21,8 +22,9 @@
           placeholder="Please enter branch address..."
         />
       </el-form-item>
+
       <el-form-item class="button-group">
-        <el-button type="success" @click="createData()" round>
+        <el-button type="success" @click="updateData()" round>
           {{ $t("message.create_header") }}
         </el-button>
         <el-button type="info" @click="clearData()" round>{{
@@ -34,19 +36,48 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import axios from "axios";
-import { ElMessage } from "element-plus";
+import { FormInstance, FormRules } from "element-plus";
+import { requestMessage } from "@/axios-functions";
 
 export default defineComponent({
   name: "branch_insert",
   data() {
     return {
-      // baseURL: "https://localhost:7123/api/branches/",
+      ruleFormRef: ref<FormInstance>(),
       input: {
-        branchName: null,
-        branchAddr: null,
+        branchName: ref(""),
+        branchAddr: ref(""),
       },
+      rules: reactive<FormRules>({
+        name: [
+          {
+            required: true,
+            message: "Please input branch name",
+            trigger: "blur",
+          },
+          {
+            min: 2,
+            max: 100,
+            message: "Length should be 2 to 100",
+            trigger: "blur",
+          },
+        ],
+        addr: [
+          {
+            required: true,
+            message: "Please input branch address",
+            trigger: "blur",
+          },
+          {
+            min: 2,
+            max: 200,
+            message: "Length should be 2 to 200",
+            trigger: "blur",
+          },
+        ],
+      }),
     };
   },
   props: {
@@ -63,27 +94,36 @@ export default defineComponent({
         .post(this.baseURL, this.input)
         .then(() => {
           // open success notification
-          ElMessage({
-            type: "success",
-            message: "Insert process completed!",
-          });
+          requestMessage("success", "Insert", "confirm");
           this.clearData();
           this.$emit("refresh");
           this.$emit("close");
         })
         .catch((error) => {
           // open error notification
-          ElMessage({
-            type: "error",
-            message: "Insert process failed! Please try again.",
-          });
+          requestMessage("error", "Insert", "confirm");
           console.log(error);
         });
     },
     // clear input data
     clearData(): void {
-      this.input.branchName = null;
-      this.input.branchAddr = null;
+      this.input = {
+        branchName: "",
+        branchAddr: "",
+      };
+    },
+    // submit form
+    submitForm(formEl: FormInstance | undefined) {
+      if (!formEl) return;
+      formEl.validate((valid, fields) => {
+        if (!valid) {
+          // open error notification
+          requestMessage("error", "Insert", "confirm");
+          console.log("error submit!", fields);
+          return;
+        }
+        this.createData();
+      });
     },
   },
 });

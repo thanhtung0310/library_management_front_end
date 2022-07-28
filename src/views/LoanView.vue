@@ -24,6 +24,7 @@
         :dueDate="output.dueDate"
         :loanStatus="output.loanStatus"
         :baseURL="baseURL"
+        :runMethod="trigger"
         @refresh="getDataFromApi"
         @close="close('update-div')"
       ></UpdateModal>
@@ -69,9 +70,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import axios from "axios";
-import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
+import { ElMessageBox } from "element-plus";
 import type { Action } from "element-plus";
 import UpdateModal from "@/pages/Loans/LoanUpdate.vue";
 import InsertModal from "@/pages/Loans/LoanInsert.vue";
@@ -95,14 +96,15 @@ export default defineComponent({
       baseURL: "https://localhost:7123/api/loans/",
       loans: null,
       output: {
-        loanID: Number,
-        loan_BookID: Number,
-        loan_BranchID: Number,
-        loan_BorrowerID: Number,
-        loanDate: String,
-        dueDate: String,
-        loanStatus: String,
+        loanID: ref(0),
+        loan_BookID: ref(0),
+        loan_BranchID: ref(0),
+        loan_BorrowerID: ref(0),
+        loanDate: ref(""),
+        dueDate: ref(""),
+        loanStatus: ref(""),
       },
+      trigger: true,
     };
   },
   methods: {
@@ -144,6 +146,7 @@ export default defineComponent({
     passDatatoUpdatePage(model: null): void {
       // parsing data into Json format
       this.output = JSON.parse(JSON.stringify(model));
+      this.trigger = !this.trigger;
 
       // display update modal
       return showNKeepModal("update-div", "insert-div");

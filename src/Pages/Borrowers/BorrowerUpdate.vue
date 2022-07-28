@@ -1,98 +1,108 @@
 <template>
   <div class="update-box">
-    <div class="box-header">
-      <p>
-        {{ $t("message.update_message", { table: "borrower" }) }}
-        {{ borrowerID }}
-      </p>
-    </div>
-    <div class="form">
-      <div class="form-group databox">
+    <el-form>
+      <div class="box-header">
+        <p>
+          {{ $t("message.update_message", { table: "borrower" }) }}
+          {{ borrowerID }}
+        </p>
+      </div>
+
+      <el-form-item>
         <label>{{ $t("borrowers.borrower_name") }}: </label>
-        <input
-          :value="borrowerName"
+        <el-input
+          v-model="borrowerName_value"
           type="text"
-          name="borrower_name"
-          id="borrower_name"
-          placeholder="Please update borrower name..."
+          placeholder="Please enter borrower name..."
         />
-      </div>
-      <div class="form-group databox">
+      </el-form-item>
+
+      <el-form-item>
         <label>{{ $t("borrowers.borrower_address") }}: </label>
-        <input
-          :value="borrowerAddr"
-          type="text"
-          name="borrower_addr"
-          id="borrower_addr"
-          placeholder="Please update borrower address..."
+        <el-input
+          v-model="borrowerAddr_value"
+          type="textarea"
+          placeholder="Please enter borrower address..."
         />
-      </div>
-      <div class="form-group databox">
+      </el-form-item>
+
+      <el-form-item>
         <label>{{ $t("borrowers.borrower_number") }}: </label>
-        <input
-          :value="borrowerNo"
+        <el-input
+          v-model="borrowerNum_value"
           type="text"
-          name="borrower_no"
-          id="borrower_no"
-          placeholder="Please update borrower contact number..."
+          placeholder="Please enter borrower contact number..."
         />
-      </div>
-      <div class="form-group button">
-        <button type="submit" @click="$emit('close'), updateData()">
+      </el-form-item>
+
+      <el-form-item class="button-group">
+        <el-button type="success" @click="updateData()" round>
           {{ $t("message.update_header") }}
-        </button>
-      </div>
-    </div>
+        </el-button>
+      </el-form-item>
+    </el-form>
   </div>
-</template>>
+</template>
+>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import axios from "axios";
+import { ElMessageBox } from "element-plus";
+import type { Action } from "element-plus";
+import { requestMessage } from "@/axios-functions";
 
 export default defineComponent({
   name: "borrower_update",
   data() {
     return {
-      // baseURL: "https://localhost:7123/api/borrowers/",
       input: {
-        borrowerID: this.borrowerID,
-        borrowerName: this.borrowerName,
-        borrowerAddr: this.borrowerAddr,
-        borrowerNum: this.borrowerNo,
+        borrowerID: ref(0),
+        borrowerName: ref(""),
+        borrowerAddr: ref(""),
+        borrowerNum: ref(""),
       },
+      borrowerName_value: ref(""),
+      borrowerAddr_value: ref(""),
+      borrowerNum_value: ref(""),
     };
   },
   props: {
     borrowerID: {
-      default: 0,
+      default: ref(0),
       type: Number,
     },
     borrowerName: {
-      default: "",
+      default: ref(""),
       type: String,
     },
     borrowerAddr: {
-      default: "",
+      default: ref(""),
       type: String,
     },
-    borrowerNo: {
-      default: "",
+    borrowerNum: {
+      default: ref(""),
       type: String,
     },
     baseURL: {
-      type: String, 
       default: "",
-    }
+      type: String,
+    },
+    runMethod: Boolean,
   },
   methods: {
+    getDataFromParentComp(): void {
+      this.borrowerName_value = this.borrowerName;
+      this.borrowerAddr_value = this.borrowerAddr;
+      this.borrowerNum_value = this.borrowerNum;
+    },
     // update new data into database
     updateData(): void {
       // parsing data from parent comp to child comp
       this.input.borrowerID = this.borrowerID;
-      this.input.borrowerName = this.borrowerName;
-      this.input.borrowerAddr = this.borrowerAddr;
-      this.input.borrowerNum = this.borrowerNo;
+      this.input.borrowerName = this.borrowerName_value;
+      this.input.borrowerAddr = this.borrowerAddr_value;
+      this.input.borrowerNum = this.borrowerNum_value;
 
       // parsing data into Json format
       const body = JSON.stringify(this.input);
@@ -100,16 +110,37 @@ export default defineComponent({
         "Content-Type": "application/json",
       };
 
-      // call axios put callback
-      axios
-        .put(this.baseURL + this.borrowerID, body, { headers })
+      // open update confirmation modal
+      ElMessageBox.confirm("This ID will be updated. Continue?", "Info", {
+        distinguishCancelAndClose: true,
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
+        draggable: true,
+      })
         .then(() => {
-          alert("Success update borrower with id = " + this.borrowerID);
+          // call axios put callback
+          axios
+            .put(this.baseURL + this.borrowerID, body, { headers })
+            .then(() => {
+              // open success notification
+              requestMessage("success", "Update", "confirm");
+              this.$emit("refresh");
+              this.$emit("close");
+            })
+            .catch((error) => {
+              // open error notification
+              requestMessage("error", "Update", "confirm");
+              console.log(error);
+            });
         })
-        .catch((error) => {
-          alert("Cannot connect to server...");
-          console.log(error);
+        .catch((action: Action) => {
+          requestMessage("info", "Update", action);
         });
+    },
+  },
+  watch: {
+    runMethod(): void {
+      this.getDataFromParentComp();
     },
   },
 });

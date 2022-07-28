@@ -1,98 +1,107 @@
 <template>
   <div class="update-box">
-    <div class="box-header">
-      <p>
-        {{ $t("message.update_message", { table: "publisher" }) }}
-        {{ publisherID }}
-      </p>
-    </div>
-    <div class="form">
-      <div class="form-group databox">
+    <el-form>
+      <div class="box-header">
+        <p>
+          {{ $t("message.update_message", { table: "publisher" }) }}
+          {{ publisherID }}
+        </p>
+      </div>
+
+      <el-form-item>
         <label>{{ $t("publishers.publisher_name") }}: </label>
-        <input
-          :value="publisherName"
+        <el-input
+          v-model="publisherName_value"
           type="text"
-          name="publisher_name"
-          id="publisher_name"
-          placeholder="Please update publisher name..."
+          placeholder="Please enter publisher name..."
         />
-      </div>
-      <div class="form-group databox">
+      </el-form-item>
+
+      <el-form-item>
         <label>{{ $t("publishers.publisher_address") }}: </label>
-        <input
-          :value="publisherAddr"
-          type="text"
-          name="publisher_addr"
-          id="publisher_addr"
-          placeholder="Please update publisher address..."
+        <el-input
+          v-model="publisherAddr_value"
+          type="textarea"
+          placeholder="Please enter publisher address..."
         />
-      </div>
-      <div class="form-group databox">
+      </el-form-item>
+      <el-form-item>
         <label>{{ $t("publishers.publisher_number") }}: </label>
-        <input
-          :value="publisherNo"
+        <el-input
+          v-model="publisherNum_value"
           type="text"
-          name="publisher_no"
-          id="publisher_no"
-          placeholder="Please update publisher contact number..."
+          placeholder="Please enter publisher contact number..."
         />
-      </div>
-      <div class="form-group button">
-        <button type="submit" @click="$emit('close'), updateData()">
+      </el-form-item>
+
+      <el-form-item class="button-group">
+        <el-button type="success" @click="updateData()" round>
           {{ $t("message.update_header") }}
-        </button>
-      </div>
-    </div>
+        </el-button>
+      </el-form-item>
+    </el-form>
   </div>
-</template>>
+</template>
+>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import axios from "axios";
+import { ElMessageBox } from "element-plus";
+import type { Action } from "element-plus";
+import { requestMessage } from "@/axios-functions";
 
 export default defineComponent({
   name: "publisher_update",
   data() {
     return {
-      // baseURL: "https://localhost:7123/api/publishers/",
       input: {
-        publisherID: this.publisherID,
-        publisherName: this.publisherName,
-        publisherAddr: this.publisherAddr,
-        publisherNum: this.publisherNo,
+        publisherID: ref(0),
+        publisherName: ref(""),
+        publisherAddr: ref(""),
+        publisherNum: ref(""),
       },
+      publisherName_value: ref(""),
+      publisherAddr_value: ref(""),
+      publisherNum_value: ref(""),
     };
   },
   props: {
     publisherID: {
-      default: 0,
+      default: ref(0),
       type: Number,
     },
     publisherName: {
-      default: "",
+      default: ref(""),
       type: String,
     },
     publisherAddr: {
-      default: "",
+      default: ref(""),
       type: String,
     },
-    publisherNo: {
-      default: "",
+    publisherNum: {
+      default: ref(""),
       type: String,
     },
     baseURL: {
-      type: String, 
       default: "",
-    }
+      type: String,
+    },
+    runMethod: Boolean,
   },
   methods: {
+    getDataFromParentComp(): void {
+      this.publisherName_value = this.publisherName;
+      this.publisherAddr_value = this.publisherAddr;
+      this.publisherNum_value = this.publisherNum;
+    },
     // update new data into database
     updateData(): void {
       // parsing data from parent comp to child comp
       this.input.publisherID = this.publisherID;
-      this.input.publisherName = this.publisherName;
-      this.input.publisherAddr = this.publisherAddr;
-      this.input.publisherNum = this.publisherNo;
+      this.input.publisherName = this.publisherName_value;
+      this.input.publisherAddr = this.publisherAddr_value;
+      this.input.publisherNum = this.publisherNum_value;
 
       // parsing data into Json format
       const body = JSON.stringify(this.input);
@@ -100,16 +109,37 @@ export default defineComponent({
         "Content-Type": "application/json",
       };
 
-      // call axios put callback
-      axios
-        .put(this.baseURL + this.publisherID, body, { headers })
+      // open update confirmation modal
+      ElMessageBox.confirm("This ID will be updated. Continue?", "Info", {
+        distinguishCancelAndClose: true,
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
+        draggable: true,
+      })
         .then(() => {
-          alert("Success update publisher with id = " + this.publisherID);
+          // call axios put callback
+          axios
+            .put(this.baseURL + this.publisherID, body, { headers })
+            .then(() => {
+              // open success notification
+              requestMessage("success", "Update", "confirm");
+              this.$emit("refresh");
+              this.$emit("close");
+            })
+            .catch((error) => {
+              // open error notification
+              requestMessage("error", "Update", "confirm");
+              console.log(error);
+            });
         })
-        .catch((error) => {
-          alert("Cannot connect to server...");
-          console.log(error);
+        .catch((action: Action) => {
+          requestMessage("info", "Update", action);
         });
+    },
+  },
+  watch: {
+    runMethod(): void {
+      this.getDataFromParentComp();
     },
   },
 });

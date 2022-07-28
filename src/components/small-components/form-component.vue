@@ -84,7 +84,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, reactive } from "vue";
-import { FormInstance, FormRules } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 
 export default defineComponent({
   name: "elform-template",

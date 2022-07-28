@@ -56,13 +56,13 @@
   },
   "authors": {
     "author_id": "Author ID",
-    "book_id": "Book ID",
+    "book_id": "Book name",
     "author_name": "Author name"
   },
   "books": {
     "book_id": "Book ID",
     "book_title": "Book title",
-    "publisher_id": "Publisher ID",
+    "publisher_id": "Publisher name",
     "publisher_list": "Publisher list"
   },
   "branches": {
@@ -78,16 +78,16 @@
   },
   "copies": {
     "copies_id": "Copies ID",
-    "book_id": "Book ID",
-    "branch_id": "Branch ID",
+    "book_id": "Book name",
+    "branch_id": "Branch name",
     "total_copies_number": "Total number of copies",
-    "avail_copies_number": "Total number of availble copies"
+    "avail_copies_number": "Total number of available copies"
   },
   "loans" : {
     "loan_id": "Loan ID",
-    "book_id": "Book ID",
-    "branch_id": "Branch ID",
-    "borrower_id": "Borrower ID",
+    "book_id": "Book name",
+    "branch_id": "Branch name",
+    "borrower_id": "Borrower name",
     "loan_date": "Loan date",
     "due_date": "Due date",
     "loan_status": "Loan order status"

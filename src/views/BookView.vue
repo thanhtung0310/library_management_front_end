@@ -106,14 +106,14 @@ export default defineComponent({
       axios
         .get(this.baseURL)
         .then((response) => {
-          if (response.data != null) {
-            this.books = response.data;
-            // open success notification
-            serverNotification("success");
-          } else {
+          if (!response) {
             // open warning notification
             serverNotification("warning");
+            return;
           }
+          this.books = response.data;
+          // open success notification
+          serverNotification("success");
         })
         .catch((error) => {
           // open error notification
