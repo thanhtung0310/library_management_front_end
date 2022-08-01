@@ -31,40 +31,70 @@
     </div>
 
     <div class="table-view">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>{{ $t("loans.loan_id") }}</th>
-            <th>{{ $t("loans.book_id") }}</th>
-            <th>{{ $t("loans.branch_id") }}</th>
-            <th>{{ $t("loans.borrower_id") }}</th>
-            <th>{{ $t("loans.loan_date") }}</th>
-            <th>{{ $t("loans.due_date") }}</th>
-            <th>{{ $t("loans.loan_status") }}</th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(row, index) in loans" :key="index">
-            <td>{{ row.loanID }}</td>
-            <td>{{ row.loan_BookID }}</td>
-            <td>{{ row.loan_BranchID }}</td>
-            <td>{{ row.loan_BorrowerID }}</td>
-            <td>{{ row.loanDate }}</td>
-            <td>{{ row.dueDate }}</td>
-            <td>{{ row.loanStatus }}</td>
-            <td
-              @click="passDatatoUpdatePage(row), scrollToAnchor('update-div')"
-            >
-              <font-awesome-icon class="icon" icon="fa-solid fa-circle-info" />
-            </td>
-            <td @click="deleteData(row)">
-              <font-awesome-icon class="icon" icon="fa-solid fa-ban" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <el-table
+        :data="loans"
+        :default-sort="{ prop: 'loanID', order: 'descending' }"
+        style="width: 80%"
+        max-height="350"
+      >
+        <el-table-column fixed prop="loanID" sortable>
+          <template #header>
+            {{ $t("loans.loan_id") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="loan_BookID">
+          <template #header>
+            {{ $t("loans.book_id") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="loan_BranchID">
+          <template #header>
+            {{ $t("loans.branch_id") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="loan_BorrowerID">
+          <template #header>
+            {{ $t("loans.borrower_id") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="loanDate">
+          <template #header>
+            {{ $t("loans.loan_date") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="dueDate">
+          <template #header>
+            {{ $t("loans.due_date") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="loanStatus">
+          <template #header>
+            {{ $t("loans.loan_status") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column fixed="right">
+          <template #header> Functions </template>
+          <template #default="scope">
+            <el-button
+              @click="
+                passDataToUpdatePage(scope.$index, scope.row),
+                  scrollToAnchor('update-div')
+              "
+              ><font-awesome-icon class="icon" icon="fa-solid fa-circle-info"
+            /></el-button>
+            <el-button @click="deleteData(scope.$index, scope.row)">
+              <font-awesome-icon class="icon" icon="fa-solid fa-trash-can" />
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -85,6 +115,16 @@ import {
   showNKeepModal,
 } from "@/axios-functions";
 
+interface ILoan {
+  loanID: number;
+  loan_BookID: number;
+  loan_BranchID: number;
+  loan_BorrowerID: number;
+  loanDate: string;
+  dueDate: string;
+  loanStatus: string;
+}
+
 export default defineComponent({
   name: "LoanView",
   components: {
@@ -94,7 +134,7 @@ export default defineComponent({
   data() {
     return {
       baseURL: "https://localhost:7123/api/loans/",
-      loans: null,
+      loans: [],
       output: {
         loanID: ref(0),
         loan_BookID: ref(0),
@@ -118,14 +158,15 @@ export default defineComponent({
       axios
         .get(this.baseURL)
         .then((response) => {
-          if (response.data != null) {
-            this.loans = response.data;
-            // open success notification
-            serverNotification("success");
-          } else {
+          if (!response) {
             // open warning notification
             serverNotification("warning");
+            return;
           }
+          this.loans = response.data;
+          // this.totalRow = response.data.length;
+          // open success notification
+          serverNotification("success");
         })
         .catch((error) => {
           // open error notification
@@ -143,18 +184,18 @@ export default defineComponent({
       return closeModal(element);
     },
     // pass data from parent comp to child comp
-    passDatatoUpdatePage(model: null): void {
+    passDataToUpdatePage(index: number, row: ILoan): void {
       // parsing data into Json format
-      this.output = JSON.parse(JSON.stringify(model));
+      this.output = JSON.parse(JSON.stringify(row));
       this.trigger = !this.trigger;
 
       // display update modal
       return showNKeepModal("update-div", "insert-div");
     },
     // delete data from datatable with id
-    deleteData(model: undefined): void {
+    deleteData(index: number, row: ILoan): void {
       // parsing data into Json format
-      this.output = JSON.parse(JSON.stringify(model));
+      this.output = JSON.parse(JSON.stringify(row));
 
       // open delete confirmation modal
       ElMessageBox.confirm(

@@ -1,20 +1,20 @@
 <template>
   <div class="update-box">
-    <el-form>
+    <el-form ref="ruleFormRef" :rules="rules">
       <div class="box-header">
         <p>
           {{ $t("message.update_message", { table: "branch" }) }} {{ branchID }}
         </p>
       </div>
 
-      <el-form-item>
+      <el-form-item prop="name">
         <label>{{ $t("branches.branch_name") }}: </label>
-        <el-input v-model="branchName_value" type="text" />
+        <el-input v-model="ruleForm.name" type="text" />
       </el-form-item>
 
-      <el-form-item>
+      <el-form-item prop="address">
         <label>{{ $t("branches.branch_address") }}: </label>
-        <el-input v-model="branchAddr_value" type="textarea" />
+        <el-input v-model="ruleForm.address" type="textarea" />
       </el-form-item>
 
       <el-form-item class="button-group">
@@ -25,26 +25,57 @@
     </el-form>
   </div>
 </template>
->
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import axios from "axios";
 import { ElMessageBox } from "element-plus";
 import type { Action } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 import { requestMessage } from "@/axios-functions";
 
 export default defineComponent({
   name: "branch_update",
   data() {
     return {
+      ruleFormRef: ref<FormInstance>(),
       input: {
         branchID: ref(0),
         branchName: ref(""),
         branchAddr: ref(""),
       },
-      branchName_value: ref(""),
-      branchAddr_value: ref(""),
+      ruleForm: reactive({
+        name: "",
+        address: "",
+      }),
+      rules: reactive<FormRules>({
+        name: [
+          {
+            required: true,
+            message: "Please input branch name",
+            trigger: "blur",
+          },
+          {
+            min: 2,
+            max: 100,
+            message: "Length should be 2 to 100",
+            trigger: "blur",
+          },
+        ],
+        address: [
+          {
+            required: true,
+            message: "Please input branch address",
+            trigger: "blur",
+          },
+          {
+            min: 2,
+            max: 200,
+            message: "Length should be 2 to 200",
+            trigger: "blur",
+          },
+        ],
+      }),
     };
   },
   props: {
@@ -68,15 +99,15 @@ export default defineComponent({
   },
   methods: {
     getDataFromParentComp(): void {
-      this.branchName_value = this.branchName;
-      this.branchAddr_value = this.branchAddr;
+      this.ruleForm.name = this.branchName;
+      this.ruleForm.address = this.branchAddr;
     },
     // update new data into database
     updateData(): void {
       // parsing data from parent comp to child comp
       this.input.branchID = this.branchID;
-      this.input.branchName = this.branchName_value;
-      this.input.branchAddr = this.branchAddr_value;
+      this.input.branchName = this.ruleForm.name;
+      this.input.branchAddr = this.ruleForm.address;
 
       // parsing data into Json format
       const body = JSON.stringify(this.input);

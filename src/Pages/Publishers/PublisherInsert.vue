@@ -1,39 +1,39 @@
 <template>
   <div class="insert-box">
-    <el-form :model="input" :rules="rules">
+    <el-form ref="ruleFormRef" :rules="rules">
       <div class="box-header">
         <p>{{ $t("message.create_message", { table: "publisher" }) }}</p>
       </div>
 
       <el-form-item prop="name">
-        <label>{{ $t("publishers.publisher_name") }}: </label>
+        <template #label>{{ $t("publishers.publisher_name") }}: </template>
         <el-input
-          v-model="input.publisherName"
+          v-model="ruleForm.name"
           type="text"
           placeholder="Please enter publisher name..."
         />
       </el-form-item>
 
-      <el-form-item prop="addr">
-        <label>{{ $t("publishers.publisher_address") }}: </label>
+      <el-form-item prop="address">
+        <template #label>{{ $t("publishers.publisher_address") }}: </template>
         <el-input
-          v-model="input.publisherAddr"
+          v-model="ruleForm.address"
           type="textarea"
           placeholder="Please enter publisher address..."
         />
       </el-form-item>
 
       <el-form-item prop="number">
-        <label>{{ $t("publishers.publisher_number") }}: </label>
+        <template #label>{{ $t("publishers.publisher_number") }}: </template>
         <el-input
-          v-model="input.publisherNum"
+          v-model="ruleForm.number"
           type="text"
           placeholder="Please enter publisher contact number..."
         />
       </el-form-item>
 
       <el-form-item class="button-group">
-        <el-button type="success" @click="createData()" round>
+        <el-button type="success" @click="createData(ruleFormRef)" round>
           {{ $t("message.create_header") }}
         </el-button>
       </el-form-item>
@@ -47,18 +47,24 @@
 <script lang="ts">
 import { defineComponent, reactive, ref } from "vue";
 import axios from "axios";
-import { FormInstance, FormRules } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 import { requestMessage } from "@/axios-functions";
 
 export default defineComponent({
   name: "publisher_insert",
   data() {
     return {
+      ruleFormRef: ref<FormInstance>(),
       input: {
         publisherName: ref(""),
         publisherAddr: ref(""),
         publisherNum: ref(""),
       },
+      ruleForm: reactive({
+        name: "",
+        address: "",
+        number: "",
+      }),
       rules: reactive<FormRules>({
         name: [
           {
@@ -110,7 +116,21 @@ export default defineComponent({
   },
   methods: {
     // create new publisher in database
-    createData(): void {
+    createData(formEl: FormInstance | undefined): void {
+      //
+      this.input.publisherName = this.ruleForm.name;
+      this.input.publisherAddr = this.ruleForm.address;
+      this.input.publisherNum = this.ruleForm.number;
+      // input validation
+      if (!formEl) return;
+      formEl.validate((valid, fields) => {
+        if (!valid) {
+          // open error notification
+          requestMessage("error", "Insert", "confirm");
+          console.log("submits!", fields);
+          return;
+        }
+      });
       // call axios post callback
       axios
         .post(this.baseURL, this.input)
@@ -145,7 +165,6 @@ export default defineComponent({
           console.log("error submit!", fields);
           return;
         }
-        this.createData();
       });
     },
   },

@@ -27,31 +27,46 @@
     </div>
 
     <div class="table-view">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>{{ $t("branches.branch_id") }}</th>
-            <th>{{ $t("branches.branch_name") }}</th>
-            <th>{{ $t("branches.branch_address") }}</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(row, index) in branches" :key="index">
-            <td>{{ row.branchID }}</td>
-            <td>{{ row.branchName }}</td>
-            <td>{{ row.branchAddr }}</td>
-            <td
-              @click="passDatatoUpdatePage(row), scrollToAnchor('update-div')"
-            >
-              <font-awesome-icon class="icon" icon="fa-solid fa-circle-info" />
-            </td>
-            <td @click="deleteData(row)">
-              <font-awesome-icon class="icon" icon="fa-solid fa-ban" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <el-table
+        :data="branches"
+        :default-sort="{ prop: 'branchID', order: 'ascending' }"
+        style="width: 80%"
+        max-height="350"
+      >
+        <el-table-column fixed prop="branchID" sortable>
+          <template #header>
+            {{ $t("branches.branch_id") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="branchName">
+          <template #header>
+            {{ $t("branches.branch_name") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="branchAddr">
+          <template #header>
+            {{ $t("branches.branch_address") }}
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-table-column fixed="right">
+        <template #header> Functions </template>
+        <template #default="scope">
+          <el-button
+            @click="
+              passDataToUpdatePage(scope.$index, scope.row),
+                scrollToAnchor('update-div')
+            "
+            ><font-awesome-icon class="icon" icon="fa-solid fa-circle-info"
+          /></el-button>
+          <el-button @click="deleteData(scope.$index, scope.row)">
+            <font-awesome-icon class="icon" icon="fa-solid fa-trash-can" />
+          </el-button>
+        </template>
+      </el-table-column>
     </div>
   </div>
 </template>
@@ -72,6 +87,12 @@ import {
   showNKeepModal,
 } from "@/axios-functions";
 
+interface IBranch {
+  branchID: number;
+  branchName: string;
+  branchAddr: string;
+}
+
 export default defineComponent({
   name: "BranchView",
   components: {
@@ -81,7 +102,7 @@ export default defineComponent({
   data() {
     return {
       baseURL: "https://localhost:7123/api/branches/",
-      branches: null,
+      branches: [],
       output: {
         branchID: ref(0),
         branchName: ref(""),
@@ -126,18 +147,18 @@ export default defineComponent({
       return closeModal(element);
     },
     // pass data from parent comp to child comp
-    passDatatoUpdatePage(model: null): void {
+    passDataToUpdatePage(index: number, row: IBranch): void {
       // parsing data into Json format
-      this.output = JSON.parse(JSON.stringify(model));
+      this.output = JSON.parse(JSON.stringify(row));
       this.trigger = !this.trigger;
 
       // display update modal
       return showNKeepModal("update-div", "insert-div");
     },
     // delete data from datable with id
-    deleteData(model: null): void {
+    deleteData(index: number, row: IBranch): void {
       // parsing data into Json format
-      this.output = JSON.parse(JSON.stringify(model));
+      this.output = JSON.parse(JSON.stringify(row));
 
       // open delete confirmation modal
       ElMessageBox.confirm(

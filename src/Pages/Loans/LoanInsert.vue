@@ -1,14 +1,14 @@
 <template>
   <div class="insert-box">
-    <el-form ref="ruleFormRef" :modal="input" :rules="rules">
+    <el-form ref="ruleFormRef" :rules="rules">
       <div class="box-header">
         <p>{{ $t("message.create_message", { table: "loan order" }) }}</p>
       </div>
 
       <el-form-item prop="id1">
-        <label>{{ $t("loans.book_id") }}: </label>
+        <template #label>{{ $t("loans.book_id") }}: </template>
         <el-select
-          v-model="input.loan_BookID"
+          v-model="ruleForm.id1"
           placeholder="Select book"
           style="width: 100%"
         >
@@ -37,9 +37,9 @@
       </el-form-item>
 
       <el-form-item prop="id2">
-        <label>{{ $t("loans.branch_id") }}: </label>
+        <template #label>{{ $t("loans.branch_id") }}: </template>
         <el-select
-          v-model="input.loan_BranchID"
+          v-model="ruleForm.id2"
           placeholder="Select branch"
           style="width: 100%"
         >
@@ -68,9 +68,9 @@
       </el-form-item>
 
       <el-form-item prop="id3">
-        <label>{{ $t("loans.borrower_id") }}: </label>
+        <template #label>{{ $t("loans.borrower_id") }}: </template>
         <el-select
-          v-model="input.loan_BorrowerID"
+          v-model="ruleForm.id3"
           placeholder="Select borrower"
           style="width: 100%"
         >
@@ -99,26 +99,25 @@
       </el-form-item>
 
       <el-form-item prop="date1">
-        <label>{{ $t("loans.loan_date") }}: </label>
-        <el-input v-model="input.loanDate" type="date" />
+        <template #label>{{ $t("loans.loan_date") }}: </template>
+        <el-input v-model="ruleForm.date1" type="date" />
       </el-form-item>
 
       <el-form-item prop="date2">
-        <label>{{ $t("loans.due_date") }}: </label>
-        <el-input v-model="input.dueDate" type="date" />
+        <template #label>{{ $t("loans.due_date") }}: </template>
+        <el-input v-model="ruleForm.date2" type="date" />
       </el-form-item>
 
-      <!-- lỗi style - không hiện button -->
       <el-form-item prop="status">
-        <label>{{ $t("loans.loan_status") }}: </label>
-        <el-radio-group v-model="input.loanStatus">
+        <template #label>{{ $t("loans.loan_status") }}: </template>
+        <el-radio-group v-model="ruleForm.status">
           <el-radio label="In Progress" />
           <el-radio label="Done" />
         </el-radio-group>
       </el-form-item>
 
       <el-form-item class="button-group">
-        <el-button type="success" @click="updateData()" round>
+        <el-button type="success" @click="createData(ruleFormRef)" round>
           {{ $t("message.create_header") }}
         </el-button>
         <el-button type="info" @click="clearData()" round>{{
@@ -141,19 +140,27 @@ export default defineComponent({
     return {
       ruleFormRef: ref<FormInstance>(),
       book_baseURL: "https://localhost:7123/api/branches/",
-      book_list: null,
+      book_list: [],
       branch_baseURL: "https://localhost:7123/api/books/",
-      branch_list: null,
+      branch_list: [],
       borrower_baseURL: "https://localhost:7123/api/borrowers/",
-      borrower_list: null,
+      borrower_list: [],
       input: {
-        loan_BookID: ref(""),
-        loan_BranchID: ref(""),
-        loan_BorrowerID: ref(""),
+        loan_BookID: ref(0),
+        loan_BranchID: ref(0),
+        loan_BorrowerID: ref(0),
         loanDate: ref(""),
         dueDate: ref(""),
         loanStatus: ref(""),
       },
+      ruleForm: reactive({
+        id1: 0,
+        id2: 0,
+        id3: 0,
+        date1: "",
+        date2: "",
+        status: "",
+      }),
       rules: reactive<FormRules>({
         id1: [
           {
@@ -264,7 +271,24 @@ export default defineComponent({
         });
     },
     // create new loan order in database
-    createData(): void {
+    createData(formEl: FormInstance | undefined): void {
+      //
+      this.input.loan_BookID = this.ruleForm.id1;
+      this.input.loan_BranchID = this.ruleForm.id2;
+      this.input.loan_BorrowerID = this.ruleForm.id3;
+      this.input.loanDate = this.ruleForm.date1;
+      this.input.dueDate = this.ruleForm.date2;
+      this.input.loanStatus = this.ruleForm.status;
+      // input validation
+      if (!formEl) return;
+      formEl.validate((valid, fields) => {
+        if (!valid) {
+          // open error notification
+          requestMessage("error", "Insert", "confirm");
+          console.log("submits!", fields);
+          return;
+        }
+      });
       // call axios post callback
       axios
         .post(this.baseURL, this.input)
@@ -284,9 +308,9 @@ export default defineComponent({
     // clear input data
     clearData(): void {
       this.input = {
-        loan_BookID: "",
-        loan_BranchID: "",
-        loan_BorrowerID: "",
+        loan_BookID: 0,
+        loan_BranchID: 0,
+        loan_BorrowerID: 0,
         loanDate: "",
         dueDate: "",
         loanStatus: "",
@@ -294,14 +318,14 @@ export default defineComponent({
     },
     // submit form
     submitForm(formEl: FormInstance | undefined) {
+      console.log(formEl);
       if (!formEl) return;
       formEl.validate((valid, fields) => {
-        if (valid) {
-          this.createData();
-        } else {
+        if (!valid) {
           // open error notification
           requestMessage("error", "Insert", "confirm");
           console.log("error submit!", fields);
+          return;
         }
       });
     },

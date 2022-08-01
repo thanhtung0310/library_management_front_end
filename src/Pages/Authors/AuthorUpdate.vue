@@ -1,15 +1,15 @@
 <template>
   <div class="update-box">
-    <el-form>
+    <el-form ref="ruleFormRef" :rules="rules">
       <div class="box-header">
         <p>
           {{ $t("message.update_message", { table: "author" }) }} {{ authorID }}
         </p>
       </div>
 
-      <el-form-item>
-        <label>{{ $t("authors.book_id") }}: </label>
-        <el-select v-model="bookID_value" style="width: 100%">
+      <el-form-item prop="id">
+        <template #label>{{ $t("authors.book_id") }}: </template>
+        <el-select v-model="ruleForm.id" style="width: 100%">
           <el-option
             v-for="item in book_list"
             :key="item.bookID"
@@ -29,9 +29,9 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item>
-        <label>{{ $t("authors.author_name") }}: </label>
-        <el-input v-model="authorName_value" type="text" />
+      <el-form-item prop="name">
+        <template #label>{{ $t("authors.author_name") }}: </template>
+        <el-input v-model="ruleForm.name" type="text" />
       </el-form-item>
 
       <el-form-item class="button-group">
@@ -45,25 +45,51 @@
 >
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import axios from "axios";
 import { ElMessageBox } from "element-plus";
 import type { Action } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 import { serverNotification, requestMessage } from "@/axios-functions";
 
 export default defineComponent({
   name: "author_update",
   data() {
     return {
+      ruleFormRef: ref<FormInstance>(),
       input: {
         authorID: ref(0),
         author_BookID: ref(0),
         authorName: ref(""),
       },
       book_baseURL: "https://localhost:7123/api/books/",
-      book_list: null,
-      bookID_value: ref(0),
-      authorName_value: ref(""),
+      book_list: [],
+      ruleForm: reactive({
+        id: 0,
+        name: "",
+      }),
+      rules: reactive<FormRules>({
+        id: [
+          {
+            required: true,
+            message: "Please select book",
+            trigger: "change",
+          },
+        ],
+        name: [
+          {
+            required: true,
+            message: "Please input author name",
+            trigger: "blur",
+          },
+          {
+            min: 1,
+            max: 50,
+            message: "Length should between 1 and 50",
+            trigger: "blur",
+          },
+        ],
+      }),
     };
   },
   props: {
@@ -87,8 +113,8 @@ export default defineComponent({
   },
   methods: {
     getDataFromParentComp(): void {
-      this.bookID_value = this.bookID;
-      this.authorName_value = this.authorName;
+      this.ruleForm.id = this.bookID;
+      this.ruleForm.name = this.authorName;
     },
     // get book list
     getDataFromApi(): void {
@@ -113,8 +139,8 @@ export default defineComponent({
     updateData(): void {
       // parsing data from parent comp to child comp
       this.input.authorID = this.authorID;
-      this.input.author_BookID = this.bookID_value;
-      this.input.authorName = this.authorName_value;
+      this.input.author_BookID = this.ruleForm.id;
+      this.input.authorName = this.ruleForm.name;
 
       // parsing data into Json format
       const body = JSON.stringify(this.input);

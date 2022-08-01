@@ -1,20 +1,20 @@
 <template>
   <div class="update-box">
-    <el-form>
+    <el-form ref="ruleFormRef" :rules="rules">
       <div class="box-header">
         <p>
           {{ $t("message.update_message", { table: "book" }) }} {{ bookID }}
         </p>
       </div>
 
-      <el-form-item>
-        <label>{{ $t("books.book_title") }}: </label>
-        <el-input v-model="bookTitle_value" type="text" />
+      <el-form-item prop="title">
+        <template #label>{{ $t("books.book_title") }}: </template>
+        <el-input v-model="ruleForm.title" type="text" />
       </el-form-item>
 
-      <el-form-item>
-        <label>{{ $t("books.publisher_id") }}: </label>
-        <el-select v-model="publisherID_value" style="width: 100%">
+      <el-form-item prop="id">
+        <template #label>{{ $t("books.publisher_id") }}: </template>
+        <el-select v-model="ruleForm.id" style="width: 100%">
           <el-option
             v-for="item in publisher_list"
             :key="item.publisherID"
@@ -44,25 +44,51 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import axios from "axios";
 import { ElMessageBox } from "element-plus";
 import type { Action } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 import { serverNotification, requestMessage } from "@/axios-functions";
 
 export default defineComponent({
   name: "book_update",
   data() {
     return {
+      ruleFormRef: ref<FormInstance>(),
       input: {
         bookID: ref(0),
         bookTitle: ref(""),
         book_PublisherID: ref(0),
       },
       publisher_baseURL: "https://localhost:7123/api/publishers/",
-      publisher_list: null,
-      bookTitle_value: ref(""),
-      publisherID_value: ref(0),
+      publisher_list: [],
+      ruleForm: reactive({
+        title: "",
+        id: 0,
+      }),
+      rules: reactive<FormRules>({
+        title: [
+          {
+            required: true,
+            message: "Please input book title",
+            trigger: "blur",
+          },
+          {
+            min: 3,
+            max: 100,
+            message: "Length should between 3 and 100",
+            trigger: "blur",
+          },
+        ],
+        id: [
+          {
+            required: true,
+            message: "Please select publisher",
+            trigger: "change",
+          },
+        ],
+      }),
     };
   },
   props: {
@@ -86,8 +112,8 @@ export default defineComponent({
   },
   methods: {
     getDataFromParentComp(): void {
-      this.bookTitle_value = this.bookTitle;
-      this.publisherID_value = this.publisherID;
+      this.ruleForm.title = this.bookTitle;
+      this.ruleForm.id = this.publisherID;
     },
     // get publisher list
     getDataFromApi(): void {
@@ -112,8 +138,8 @@ export default defineComponent({
     updateData(): void {
       // parsing data from parent comp to child comp
       this.input.bookID = this.bookID;
-      this.input.bookTitle = this.bookTitle_value;
-      this.input.book_PublisherID = this.publisherID_value;
+      this.input.bookTitle = this.ruleForm.title;
+      this.input.book_PublisherID = this.ruleForm.id;
 
       // parsing data into Json format
       const body = JSON.stringify(this.input);

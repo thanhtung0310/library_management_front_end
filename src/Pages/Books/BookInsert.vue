@@ -6,7 +6,7 @@
       </div>
 
       <el-form-item prop="title">
-        <label>{{ $t("books.book_title") }}: </label>
+        <template #label>{{ $t("books.book_title") }}: </template>
         <el-input
           v-model="ruleForm.title"
           type="text"
@@ -15,7 +15,7 @@
       </el-form-item>
 
       <el-form-item prop="id">
-        <label>{{ $t("books.publisher_id") }}: </label>
+        <template #label>{{ $t("books.publisher_id") }}: </template>
         <el-select
           v-model="ruleForm.id"
           placeholder="Select publisher"
@@ -41,7 +41,7 @@
       </el-form-item>
 
       <el-form-item class="button-group">
-        <el-button type="success" @click="createData()" round>
+        <el-button type="success" @click="createData(ruleFormRef)" round>
           {{ $t("message.create_header") }}</el-button
         >
         <el-button type="info" @click="clearData()" round>{{
@@ -72,14 +72,14 @@ export default defineComponent({
     return {
       ruleFormRef: ref<FormInstance>(),
       publisher_baseURL: "https://localhost:7123/api/publishers/",
-      publisher_list: null,
+      publisher_list: [],
       input: {
         bookTitle: ref(""),
-        book_PublisherID: ref(""),
+        book_PublisherID: ref(0),
       },
       ruleForm: reactive({
         title: "",
-        id: "",
+        id: 0,
       }),
       rules: reactive<FormRules>({
         title: [
@@ -132,10 +132,20 @@ export default defineComponent({
         });
     },
     // create new book in database
-    createData(): void {
+    createData(formEl: FormInstance | undefined): void {
       //
       this.input.bookTitle = this.ruleForm.title;
       this.input.book_PublisherID = this.ruleForm.id;
+      // input validation
+      if (!formEl) return;
+      formEl.validate((valid, fields) => {
+        if (!valid) {
+          // open error notification
+          requestMessage("error", "Insert", "confirm");
+          console.log("submits!", fields);
+          return;
+        }
+      });
       // call axios post callback
       axios
         .post(this.baseURL, this.input)
@@ -156,7 +166,7 @@ export default defineComponent({
     clearData(): void {
       this.input = {
         bookTitle: "",
-        book_PublisherID: "",
+        book_PublisherID: 0,
       };
     },
     // submit form
@@ -170,7 +180,6 @@ export default defineComponent({
           console.log("error submit!", fields);
           return;
         }
-        this.createData();
       });
     },
   },

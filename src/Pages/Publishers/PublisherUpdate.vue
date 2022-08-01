@@ -1,6 +1,6 @@
 <template>
   <div class="update-box">
-    <el-form>
+    <el-form ref="ruleFormRef" :rules="rules">
       <div class="box-header">
         <p>
           {{ $t("message.update_message", { table: "publisher" }) }}
@@ -8,30 +8,19 @@
         </p>
       </div>
 
-      <el-form-item>
-        <label>{{ $t("publishers.publisher_name") }}: </label>
-        <el-input
-          v-model="publisherName_value"
-          type="text"
-          placeholder="Please enter publisher name..."
-        />
+      <el-form-item prop="name">
+        <template #label>{{ $t("publishers.publisher_name") }}: </template>
+        <el-input v-model="ruleForm.name" type="text" />
       </el-form-item>
 
       <el-form-item>
-        <label>{{ $t("publishers.publisher_address") }}: </label>
-        <el-input
-          v-model="publisherAddr_value"
-          type="textarea"
-          placeholder="Please enter publisher address..."
-        />
+        <template #label>{{ $t("publishers.publisher_address") }}: </template>
+        <el-input v-model="ruleForm.address" type="textarea" />
       </el-form-item>
+
       <el-form-item>
-        <label>{{ $t("publishers.publisher_number") }}: </label>
-        <el-input
-          v-model="publisherNum_value"
-          type="text"
-          placeholder="Please enter publisher contact number..."
-        />
+        <template #label>{{ $t("publishers.publisher_number") }}: </template>
+        <el-input v-model="ruleForm.number" type="text" />
       </el-form-item>
 
       <el-form-item class="button-group">
@@ -45,25 +34,70 @@
 >
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import axios from "axios";
 import { ElMessageBox } from "element-plus";
 import type { Action } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 import { requestMessage } from "@/axios-functions";
 
 export default defineComponent({
   name: "publisher_update",
   data() {
     return {
+      ruleFormRef: ref<FormInstance>(),
       input: {
         publisherID: ref(0),
         publisherName: ref(""),
         publisherAddr: ref(""),
         publisherNum: ref(""),
       },
-      publisherName_value: ref(""),
-      publisherAddr_value: ref(""),
-      publisherNum_value: ref(""),
+      ruleForm: reactive({
+        name: "",
+        address: "",
+        number: "",
+      }),
+      rules: reactive<FormRules>({
+        name: [
+          {
+            required: true,
+            message: "Please input publisher name",
+            trigger: "blur",
+          },
+          {
+            min: 3,
+            max: 100,
+            message: "Length should between 3 and 100",
+            trigger: "blur",
+          },
+        ],
+        addr: [
+          {
+            required: true,
+            message: "Please input publisher address",
+            trigger: "blur",
+          },
+          {
+            min: 3,
+            max: 200,
+            message: "Length should between 3 and 200",
+            trigger: "blur",
+          },
+        ],
+        number: [
+          {
+            required: true,
+            message: "Please input publisher contact number",
+            trigger: "blur",
+          },
+          {
+            min: 3,
+            max: 50,
+            message: "Length should between 3 and 50",
+            trigger: "blur",
+          },
+        ],
+      }),
     };
   },
   props: {
@@ -91,17 +125,17 @@ export default defineComponent({
   },
   methods: {
     getDataFromParentComp(): void {
-      this.publisherName_value = this.publisherName;
-      this.publisherAddr_value = this.publisherAddr;
-      this.publisherNum_value = this.publisherNum;
+      this.ruleForm.name = this.publisherName;
+      this.ruleForm.address = this.publisherAddr;
+      this.ruleForm.number = this.publisherNum;
     },
     // update new data into database
     updateData(): void {
       // parsing data from parent comp to child comp
       this.input.publisherID = this.publisherID;
-      this.input.publisherName = this.publisherName_value;
-      this.input.publisherAddr = this.publisherAddr_value;
-      this.input.publisherNum = this.publisherNum_value;
+      this.input.publisherName = this.ruleForm.name;
+      this.input.publisherAddr = this.ruleForm.address;
+      this.input.publisherNum = this.ruleForm.number;
 
       // parsing data into Json format
       const body = JSON.stringify(this.input);

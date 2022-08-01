@@ -1,6 +1,6 @@
 <template>
   <div class="update-box">
-    <el-form>
+    <el-form ref="ruleFormRef" :rules="rules">
       <div class="box-header">
         <p>
           {{ $t("message.update_message", { table: "loan order" }) }}
@@ -8,9 +8,9 @@
         </p>
       </div>
 
-      <el-form-item>
-        <label>{{ $t("loans.book_id") }}: </label>
-        <el-select v-model="bookID_value" style="width: 100%">
+      <el-form-item prop="id1">
+        <template #label> {{ $t("loans.book_id") }}: </template>
+        <el-select v-model="ruleForm.id1" style="width: 100%">
           <el-option
             v-for="item in book_list"
             :key="item.bookID"
@@ -30,9 +30,9 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item>
-        <label>{{ $t("loans.branch_id") }}: </label>
-        <el-select v-model="branchID_value" style="width: 100%">
+      <el-form-item prop="id2">
+        <template #label>{{ $t("loans.branch_id") }}: </template>
+        <el-select v-model="ruleForm.id2" style="width: 100%">
           <el-option
             v-for="item in branch_list"
             :key="item.branchID"
@@ -52,9 +52,9 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item>
-        <label>{{ $t("loans.borrower_id") }}: </label>
-        <el-select v-model="borrowerID_value" style="width: 100%">
+      <el-form-item prop="id3">
+        <template #label>{{ $t("loans.borrower_id") }}: </template>
+        <el-select v-model="ruleForm.id3" style="width: 100%">
           <el-option
             v-for="item in borrower_list"
             :key="item.borrowerID"
@@ -74,19 +74,19 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item>
+      <el-form-item prop="date1">
         <label>{{ $t("loans.loan_date") }}: </label>
-        <el-input v-model="loanDate_value" type="date" />
+        <el-input v-model="ruleForm.date1" type="date" />
       </el-form-item>
 
-      <el-form-item>
+      <el-form-item prop="date2">
         <label>{{ $t("loans.due_date") }}: </label>
-        <el-input v-model="dueDate_value" type="date" />
+        <el-input v-model="ruleForm.date2" type="date" />
       </el-form-item>
 
-      <el-form-item>
+      <el-form-item prop="status">
         <label>{{ $t("loans.loan_status") }}: </label>
-        <el-radio-group v-model="loanStatus_value">
+        <el-radio-group v-model="ruleForm.status">
           <el-radio label="In Progress" />
           <el-radio label="Done" />
         </el-radio-group>
@@ -103,10 +103,11 @@
 >
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import axios from "axios";
 import { ElMessageBox } from "element-plus";
 import type { Action } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 import { serverNotification, requestMessage } from "@/axios-functions";
 
 export default defineComponent({
@@ -123,17 +124,66 @@ export default defineComponent({
         loanStatus: ref(""),
       },
       book_baseURL: "https://localhost:7123/api/books/",
-      book_list: null,
+      book_list: [],
       branch_baseURL: "https://localhost:7123/api/branches/",
-      branch_list: null,
+      branch_list: [],
       borrower_baseURL: "https://localhost:7123/api/borrowers/",
-      borrower_list: null,
-      bookID_value: ref(0),
-      branchID_value: ref(0),
-      borrowerID_value: ref(0),
-      loanDate_value: ref(""),
-      dueDate_value: ref(""),
-      loanStatus_value: ref(""),
+      borrower_list: [],
+      ruleForm: reactive({
+        id1: 0,
+        id2: 0,
+        id3: 0,
+        date1: "",
+        date2: "",
+        status: "",
+      }),
+      rules: reactive<FormRules>({
+        id1: [
+          {
+            required: true,
+            message: "Please select book",
+            trigger: "change",
+          },
+        ],
+        id2: [
+          {
+            required: true,
+            message: "Please select branch",
+            trigger: "change",
+          },
+        ],
+        id3: [
+          {
+            required: true,
+            message: "Please select borrower",
+            trigger: "change",
+          },
+        ],
+        date1: [
+          {
+            required: true,
+            type: "date",
+            message: "Please pick loan date (today)",
+            trigger: "change",
+          },
+        ],
+        date2: [
+          {
+            required: true,
+            type: "date",
+            message: "Please pick due date (a month later)",
+            trigger: "change",
+          },
+        ],
+        status: [
+          {
+            required: true,
+            type: "boolean",
+            message: "Please select order status",
+            trigger: "change",
+          },
+        ],
+      }),
     };
   },
   props: {
@@ -173,12 +223,12 @@ export default defineComponent({
   },
   methods: {
     getDataFromParentComp(): void {
-      this.bookID_value = this.bookID;
-      this.branchID_value = this.branchID;
-      this.borrowerID_value = this.borrowerID;
-      this.loanDate_value = this.loanDate;
-      this.dueDate_value = this.dueDate;
-      this.loanStatus_value = this.loanStatus;
+      this.ruleForm.id1 = this.bookID;
+      this.ruleForm.id2 = this.branchID;
+      this.ruleForm.id3 = this.borrowerID;
+      this.ruleForm.date1 = this.loanDate;
+      this.ruleForm.date2 = this.dueDate;
+      this.ruleForm.status = this.loanStatus;
     },
     // get drop-down list - book, branch, borrower
     getDataFromApi(): void {
@@ -235,12 +285,12 @@ export default defineComponent({
     updateData(): void {
       // parsing data from parent comp to child comp
       this.input.loanID = this.loanID;
-      this.input.loan_BookID = this.bookID_value;
-      this.input.loan_BranchID = this.branchID_value;
-      this.input.loan_BorrowerID = this.borrowerID_value;
-      this.input.loanDate = this.loanDate_value;
-      this.input.dueDate = this.dueDate_value;
-      this.input.loanStatus = this.loanStatus_value;
+      this.input.loan_BookID = this.ruleForm.id1;
+      this.input.loan_BranchID = this.ruleForm.id2;
+      this.input.loan_BorrowerID = this.ruleForm.id3;
+      this.input.loanDate = this.ruleForm.date1;
+      this.input.dueDate = this.ruleForm.date2;
+      this.input.loanStatus = this.ruleForm.status;
 
       // parsing data into Json format
       const body = JSON.stringify(this.input);

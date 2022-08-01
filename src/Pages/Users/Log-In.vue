@@ -24,11 +24,13 @@
         <el-button type="success" @click="logIn()" round>
           <router-link to="/home">{{ $t("user_box.log-in") }}</router-link>
         </el-button>
+
         <el-button type="warning" class="forgot-password" round>
           <router-link to="/forgot-password"
             >{{ $t("user_box.forgot-password") }}?</router-link
           >
         </el-button>
+
         <p class="forgot-password">
           <router-link to="/sign-up">{{
             $t("user_box.signup_message")

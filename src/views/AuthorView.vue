@@ -27,32 +27,46 @@
     </div>
 
     <div class="table-view">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>{{ $t("authors.author_id") }}</th>
-            <th>{{ $t("authors.book_id") }}</th>
-            <th>{{ $t("authors.author_name") }}</th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(row, index) in authors" :key="index">
-            <td>{{ row.authorID }}</td>
-            <td>{{ row.author_BookID }}</td>
-            <td>{{ row.authorName }}</td>
-            <td
-              @click="passDatatoUpdatePage(row), scrollToAnchor('update-div')"
-            >
-              <font-awesome-icon class="icon" icon="fa-solid fa-circle-info" />
-            </td>
-            <td @click="deleteData(row)">
-              <font-awesome-icon class="icon" icon="fa-solid fa-ban" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <el-table
+        :data="authors"
+        :default-sort="{ prop: 'authorID', order: 'ascending' }"
+        style="width: 80%"
+        max-height="350"
+      >
+        <el-table-column fixed prop="authorID" sortable>
+          <template #header>
+            {{ $t("authors.author_id") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="author_BookID">
+          <template #header>
+            {{ $t("authors.book_id") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="authorName" sortable>
+          <template #header>
+            {{ $t("authors.author_name") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column fixed="right">
+          <template #header> Functions </template>
+          <template #default="scope">
+            <el-button
+              @click="
+                passDataToUpdatePage(scope.$index, scope.row),
+                  scrollToAnchor('update-div')
+              "
+              ><font-awesome-icon class="icon" icon="fa-solid fa-circle-info"
+            /></el-button>
+            <el-button @click="deleteData(scope.$index, scope.row)">
+              <font-awesome-icon class="icon" icon="fa-solid fa-trash-can" />
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -73,6 +87,12 @@ import {
   showNKeepModal,
 } from "@/axios-functions";
 
+interface IAuthor {
+  authorID: number;
+  author_BookID: number;
+  authorName: string;
+}
+
 export default defineComponent({
   name: "AuthorView",
   components: {
@@ -82,7 +102,7 @@ export default defineComponent({
   data() {
     return {
       baseURL: "https://localhost:7123/api/authors/",
-      authors: null,
+      authors: [],
       output: {
         authorID: ref(0),
         author_BookID: ref(0),
@@ -127,18 +147,18 @@ export default defineComponent({
       return closeModal(element);
     },
     // pass data from parent comp to child comp
-    passDatatoUpdatePage(model: null): void {
+    passDataToUpdatePage(index: number, row: IAuthor): void {
       // parsing data into Json format
-      this.output = JSON.parse(JSON.stringify(model));
+      this.output = JSON.parse(JSON.stringify(row));
       this.trigger = !this.trigger;
 
       // display update modal
       return showNKeepModal("update-div", "insert-div");
     },
     // delete data from datatable with id
-    deleteData(model: null): void {
+    deleteData(index: number, row: IAuthor): void {
       // parsing data into Json format
-      this.output = JSON.parse(JSON.stringify(model));
+      this.output = JSON.parse(JSON.stringify(row));
 
       // open delete confirmation modal
       ElMessageBox.confirm(

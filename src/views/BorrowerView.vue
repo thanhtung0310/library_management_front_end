@@ -28,35 +28,52 @@
     </div>
 
     <div class="table-view">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>{{ $t("borrowers.borrower_id") }}</th>
-            <th>{{ $t("borrowers.borrower_name") }}</th>
-            <th>{{ $t("borrowers.borrower_address") }}</th>
-            <th>{{ $t("borrowers.borrower_number") }}</th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(row, index) in borrowers" :key="index">
-            <td>{{ row.borrowerID }}</td>
-            <td>{{ row.borrowerName }}</td>
-            <td>{{ row.borrowerAddr }}</td>
-            <td>{{ row.borrowerNum }}</td>
-            <td
-              @click="passDatatoUpdatePage(row), scrollToAnchor('update-div')"
-            >
-              <font-awesome-icon class="icon" icon="fa-solid fa-circle-info" />
-            </td>
-            <td @click="deleteData(row)">
-              <font-awesome-icon class="icon" icon="fa-solid fa-ban" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <el-table
+        :data="borrowers"
+        :default-sort="{ prop: 'borrowerID', order: 'ascending' }"
+        style="width: 80%"
+        max-height="350"
+      >
+        <el-table-column fixed prop="borrowerID" sortable>
+          <template #header>
+            {{ $t("borrowers.borrower_id") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="borrowerName">
+          <template #header>
+            {{ $t("borrowers.borrower_name") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="borrowerAddr">
+          <template #header>
+            {{ $t("borrowers.borrower_address") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="borrowerNum"
+          ><template #header>
+            {{ $t("borrowers.borrower_number") }}
+          </template></el-table-column
+        >
+
+        <el-table-column fixed="right">
+          <template #header> Functions </template>
+          <template #default="scope">
+            <el-button
+              @click="
+                passDataToUpdatePage(scope.$index, scope.row),
+                  scrollToAnchor('update-div')
+              "
+              ><font-awesome-icon class="icon" icon="fa-solid fa-circle-info"
+            /></el-button>
+            <el-button @click="deleteData(scope.$index, scope.row)">
+              <font-awesome-icon class="icon" icon="fa-solid fa-trash-can" />
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
   </div>
 </template>
 
@@ -76,6 +93,13 @@ import {
   showNKeepModal,
 } from "@/axios-functions";
 
+interface IBorrower {
+  borrowerID: number,
+  borrowerName: string,
+  borrowerAddr: string,
+  borrowerNum: string,
+}
+
 export default defineComponent({
   name: "BorrowerView",
   components: {
@@ -85,7 +109,7 @@ export default defineComponent({
   data() {
     return {
       baseURL: "https://localhost:7123/api/borrowers/",
-      borrowers: null,
+      borrowers: [],
       output: {
         borrowerID: ref(0),
         borrowerName: ref(""),
@@ -131,18 +155,18 @@ export default defineComponent({
       return closeModal(element);
     },
     // pass data from parent comp to child comp
-    passDatatoUpdatePage(model: null): void {
+    passDataToUpdatePage(index: number, row: IBorrower): void {
       // parsing data into Json format
-      this.output = JSON.parse(JSON.stringify(model));
+      this.output = JSON.parse(JSON.stringify(row));
       this.trigger = !this.trigger;
 
       // display update modal
       return showNKeepModal("update-div", "insert-div");
     },
     // delete data from datatable with id
-    deleteData(model: undefined): void {
+    deleteData(index: number, row: IBorrower): void {
       // parse dữ liệu sang dạng JSON
-      this.output = JSON.parse(JSON.stringify(model));
+      this.output = JSON.parse(JSON.stringify(row));
 
       // open delete confirmation modal
       ElMessageBox.confirm(

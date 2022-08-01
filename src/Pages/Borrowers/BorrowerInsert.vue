@@ -1,39 +1,39 @@
 <template>
   <div class="insert-box">
-    <el-form ref="ruleFormRef" :modal="input" :rules="rules">
+    <el-form ref="ruleFormRef" :rules="rules">
       <div class="box-header">
         <p>{{ $t("message.create_message", { table: "borrower" }) }}</p>
       </div>
 
       <el-form-item prop="name">
-        <label>{{ $t("borrowers.borrower_name") }}: </label>
+        <template #label>{{ $t("borrowers.borrower_name") }}: </template>
         <el-input
-          v-model="input.borrowerName"
+          v-model="ruleForm.name"
           type="text"
           placeholder="Please enter borrower name..."
         />
       </el-form-item>
 
-      <el-form-item prop="addr">
-        <label>{{ $t("borrowers.borrower_address") }}: </label>
+      <el-form-item prop="address">
+        <template #label>{{ $t("borrowers.borrower_address") }}: </template>
         <el-input
-          v-model="input.borrowerAddr"
+          v-model="ruleForm.address"
           type="textarea"
           placeholder="Please enter borrower address..."
         />
       </el-form-item>
 
       <el-form-item prop="number">
-        <label>{{ $t("borrowers.borrower_number") }}: </label>
+        <template #label>{{ $t("borrowers.borrower_number") }}: </template>
         <el-input
-          v-model="input.borrowerNum"
+          v-model="ruleForm.number"
           type="text"
           placeholder="Please enter borrower contact number..."
         />
       </el-form-item>
 
       <el-form-item class="button-group">
-        <el-button type="submit" @click="createData()" round>
+        <el-button type="success" @click="createData(ruleFormRef)" round>
           {{ $t("message.create_header") }}
         </el-button>
         <el-button type="info" @click="clearData()" round>{{
@@ -60,6 +60,11 @@ export default defineComponent({
         borrowerAddr: ref(""),
         borrowerNum: ref(""),
       },
+      ruleForm: reactive({
+        name: "",
+        address: "",
+        number: "",
+      }),
       rules: reactive<FormRules>({
         name: [
           {
@@ -74,7 +79,7 @@ export default defineComponent({
             trigger: "blur",
           },
         ],
-        addr: [
+        address: [
           {
             required: true,
             message: "Please input borrower address",
@@ -111,7 +116,21 @@ export default defineComponent({
   },
   methods: {
     // create new book in database
-    createData(): void {
+    createData(formEl: FormInstance | undefined): void {
+      //
+      this.input.borrowerName = this.ruleForm.name;
+      this.input.borrowerAddr = this.ruleForm.address;
+      this.input.borrowerNum = this.ruleForm.number;
+      // input validation
+      if (!formEl) return;
+      formEl.validate((valid, fields) => {
+        if (!valid) {
+          // open error notification
+          requestMessage("error", "Insert", "confirm");
+          console.log("submits!", fields);
+          return;
+        }
+      });
       // call axios post callback
       axios
         .post(this.baseURL, this.input)
@@ -139,6 +158,7 @@ export default defineComponent({
     // submit form
     submitForm(formEl: FormInstance | undefined) {
       if (!formEl) return;
+      if (!formEl) return;
       formEl.validate((valid, fields) => {
         if (!valid) {
           // open error notification
@@ -146,7 +166,6 @@ export default defineComponent({
           console.log("error submit!", fields);
           return;
         }
-        this.createData();
       });
     },
   },

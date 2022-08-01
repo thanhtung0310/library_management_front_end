@@ -28,34 +28,50 @@
     </div>
 
     <div class="table-view">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>{{ $t("publishers.publisher_id") }}</th>
-            <th>{{ $t("publishers.publisher_name") }}</th>
-            <th>{{ $t("publishers.publisher_address") }}</th>
-            <th>{{ $t("publishers.publisher_number") }}</th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(row, index) in publishers" :key="index">
-            <td>{{ row.publisherID }}</td>
-            <td>{{ row.publisherName }}</td>
-            <td>{{ row.publisherAddr }}</td>
-            <td>{{ row.publisherNum }}</td>
-            <td
-              @click="passDatatoUpdatePage(row), scrollToAnchor('update-div')"
-            >
-              <font-awesome-icon class="icon" icon="fa-solid fa-circle-info" />
-            </td>
-            <td @click="deleteData(row)">
-              <font-awesome-icon class="icon" icon="fa-solid fa-ban" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <el-table
+        :data="publishers"
+        :default-sort="{ prop: 'publisherID', order: 'ascending' }"
+        style="width: 80%"
+        max-height="350"
+      >
+        <el-table-column fixed prop="publisherID" sortable>
+          <template #header>{{ $t("publishers.publisher_id") }}</template>
+        </el-table-column>
+
+        <el-table-column prop="publisherName">
+          <template #header>
+            {{ $t("publishers.publisher_name") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="publisherAddr">
+          <template #header>
+            {{ $t("publishers.publisher_address") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="publisherNum">
+          <template #header>
+            {{ $t("publishers.publisher_number") }}
+          </template>
+        </el-table-column>
+
+        <el-table-column fixed="right">
+          <template #header> Functions </template>
+          <template #default="scope">
+            <el-button
+              @click="
+                passDataToUpdatePage(scope.$index, scope.row),
+                  scrollToAnchor('update-div')
+              "
+              ><font-awesome-icon class="icon" icon="fa-solid fa-circle-info"
+            /></el-button>
+            <el-button @click="deleteData(scope.$index, scope.row)">
+              <font-awesome-icon class="icon" icon="fa-solid fa-trash-can" />
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -76,6 +92,13 @@ import {
   showNKeepModal,
 } from "@/axios-functions";
 
+interface IPublisher {
+  publisherID: number;
+  publisherName: string;
+  publisherAddr: string;
+  publisherNum: string;
+}
+
 export default defineComponent({
   name: "PublisherView",
   components: {
@@ -85,7 +108,7 @@ export default defineComponent({
   data() {
     return {
       baseURL: "https://localhost:7123/api/publishers/",
-      publishers: null,
+      publishers: [],
       output: {
         publisherID: ref(0),
         publisherName: ref(""),
@@ -131,18 +154,18 @@ export default defineComponent({
       return closeModal(element);
     },
     // pass data from parent comp to child comp
-    passDatatoUpdatePage(model: null): void {
+    passDataToUpdatePage(index: number, row: IPublisher): void {
       // parsing data into Json format
-      this.output = JSON.parse(JSON.stringify(model));
+      this.output = JSON.parse(JSON.stringify(row));
       this.trigger = !this.trigger;
 
       // display update modal
       return showNKeepModal("update-div", "insert-div");
     },
     // delete data from datatable with id
-    deleteData(model: null): void {
+    deleteData(index: number, row: IPublisher): void {
       // parsing data into Json format
-      this.output = JSON.parse(JSON.stringify(model));
+      this.output = JSON.parse(JSON.stringify(row));
 
       // open delete confirmation modal
       ElMessageBox.confirm(

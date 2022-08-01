@@ -13,11 +13,11 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 /* import font awesome icon component */
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 /* import specific icons */
-import { faCircleInfo, faBan, faMagnifyingGlass, faGlobe } from '@fortawesome/free-solid-svg-icons'
-import {} from '@fortawesome/free-regular-svg-icons'
+import { faCircleInfo, faBan, faMagnifyingGlass, faGlobe, faTrashCan } from '@fortawesome/free-solid-svg-icons'
+// import {} from '@fortawesome/free-regular-svg-icons'
 import {faFacebook, faTwitter, faInstagram, faYoutube, faGoogle} from '@fortawesome/free-brands-svg-icons'
 /* add icons to the library */
-library.add(faCircleInfo, faBan, faMagnifyingGlass, faFacebook, faTwitter, faInstagram, faYoutube, faGlobe, faGoogle)
+library.add(faCircleInfo, faBan, faMagnifyingGlass, faFacebook, faTwitter, faInstagram, faYoutube, faGlobe, faGoogle, faTrashCan)
 
 const app = createApp(App).use(store)
 app.use(i18n)

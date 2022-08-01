@@ -1,14 +1,14 @@
 <template>
   <div class="insert-box">
-    <el-form ref="ruleFormRef" :modal="input" :rules="rules">
+    <el-form ref="ruleFormRef" :rules="rules">
       <div class="box-header">
         <p>{{ $t("message.create_message", { table: "author" }) }}</p>
       </div>
 
       <el-form-item prop="id">
-        <label>{{ $t("authors.book_id") }}: </label>
+        <template #label>{{ $t("authors.book_id") }}: </template>
         <el-select
-          v-model="book_id"
+          v-model="ruleForm.id"
           placeholder="Select book"
           style="width: 100%"
         >
@@ -32,16 +32,16 @@
       </el-form-item>
 
       <el-form-item prop="name">
-        <label>{{ $t("authors.author_name") }}: </label>
+        <template #label>{{ $t("authors.author_name") }}: </template>
         <el-input
-          v-model="input.authorName"
+          v-model="ruleForm.name"
           type="text"
           placeholder="Please enter author name..."
         />
       </el-form-item>
 
       <el-form-item class="button-group">
-        <el-button type="success" @click="updateData()" round>
+        <el-button type="success" @click="createData(ruleFormRef)" round>
           {{ $t("message.create_header") }}
         </el-button>
         <el-button type="info" @click="clearData()" round>{{
@@ -55,7 +55,7 @@
 <script lang="ts">
 import { defineComponent, reactive, ref } from "vue";
 import axios from "axios";
-import { FormInstance, FormRules } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 import { requestMessage, serverNotification } from "@/axios-functions";
 
 export default defineComponent({
@@ -64,12 +64,15 @@ export default defineComponent({
     return {
       ruleFormRef: ref<FormInstance>(),
       book_baseURL: "https://localhost:7123/api/books/",
-      book_list: null,
-      book_id: ref(""),
+      book_list: [],
       input: {
-        author_BookID: ref(""),
+        author_BookID: ref(0),
         authorName: ref(""),
       },
+      ruleForm: reactive({
+        id: 0,
+        name: "",
+      }),
       rules: reactive<FormRules>({
         id: [
           {
@@ -121,9 +124,20 @@ export default defineComponent({
         });
     },
     // create new author in database
-    createData(): void {
+    createData(formEl: FormInstance | undefined): void {
       //
-      this.input.author_BookID = this.book_id;
+      this.input.author_BookID = this.ruleForm.id;
+      this.input.authorName = this.ruleForm.name;
+      // input validation
+      if (!formEl) return;
+      formEl.validate((valid, fields) => {
+        if (!valid) {
+          // open error notification
+          requestMessage("error", "Insert", "confirm");
+          console.log("submits!", fields);
+          return;
+        }
+      });
       // call axios post callback
       axios
         .post(this.baseURL, this.input)
@@ -143,7 +157,7 @@ export default defineComponent({
     // clear input data
     clearData(): void {
       this.input = {
-        author_BookID: "",
+        author_BookID: 0,
         authorName: "",
       };
     },
@@ -157,7 +171,6 @@ export default defineComponent({
           console.log("error submit!", fields);
           return;
         }
-        this.createData();
       });
     },
   },

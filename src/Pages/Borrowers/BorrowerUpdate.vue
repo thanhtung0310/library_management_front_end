@@ -1,6 +1,6 @@
 <template>
   <div class="update-box">
-    <el-form>
+    <el-form ref="ruleFormRef" :rules="rules">
       <div class="box-header">
         <p>
           {{ $t("message.update_message", { table: "borrower" }) }}
@@ -8,31 +8,19 @@
         </p>
       </div>
 
-      <el-form-item>
-        <label>{{ $t("borrowers.borrower_name") }}: </label>
-        <el-input
-          v-model="borrowerName_value"
-          type="text"
-          placeholder="Please enter borrower name..."
-        />
+      <el-form-item prop="name">
+        <template #label>{{ $t("borrowers.borrower_name") }}: </template>
+        <el-input v-model="ruleForm.name" type="text" />
       </el-form-item>
 
-      <el-form-item>
-        <label>{{ $t("borrowers.borrower_address") }}: </label>
-        <el-input
-          v-model="borrowerAddr_value"
-          type="textarea"
-          placeholder="Please enter borrower address..."
-        />
+      <el-form-item prop="address">
+        <template #label>{{ $t("borrowers.borrower_address") }}: </template>
+        <el-input v-model="ruleForm.address" type="textarea" />
       </el-form-item>
 
-      <el-form-item>
-        <label>{{ $t("borrowers.borrower_number") }}: </label>
-        <el-input
-          v-model="borrowerNum_value"
-          type="text"
-          placeholder="Please enter borrower contact number..."
-        />
+      <el-form-item prop="number">
+        <template #label>{{ $t("borrowers.borrower_number") }}: </template>
+        <el-input v-model="ruleForm.number" type="text" />
       </el-form-item>
 
       <el-form-item class="button-group">
@@ -46,25 +34,70 @@
 >
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import axios from "axios";
 import { ElMessageBox } from "element-plus";
 import type { Action } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 import { requestMessage } from "@/axios-functions";
 
 export default defineComponent({
   name: "borrower_update",
   data() {
     return {
+      ruleFormRef: ref<FormInstance>(),
       input: {
         borrowerID: ref(0),
         borrowerName: ref(""),
         borrowerAddr: ref(""),
         borrowerNum: ref(""),
       },
-      borrowerName_value: ref(""),
-      borrowerAddr_value: ref(""),
-      borrowerNum_value: ref(""),
+      ruleForm: reactive({
+        name: "",
+        address: "",
+        number: "",
+      }),
+      rules: reactive<FormRules>({
+        name: [
+          {
+            required: true,
+            message: "Please input borrower name",
+            trigger: "blur",
+          },
+          {
+            min: 3,
+            max: 100,
+            message: "Length should between 3 and 100",
+            trigger: "blur",
+          },
+        ],
+        address: [
+          {
+            required: true,
+            message: "Please input borrower address",
+            trigger: "blur",
+          },
+          {
+            min: 3,
+            max: 200,
+            message: "Length should between 3 and 200",
+            trigger: "blur",
+          },
+        ],
+        number: [
+          {
+            required: true,
+            message: "Please input borrower contact number",
+            trigger: "blur",
+          },
+          {
+            min: 3,
+            max: 50,
+            message: "Length should between 3 and 50",
+            trigger: "blur",
+          },
+        ],
+      }),
     };
   },
   props: {
@@ -92,17 +125,17 @@ export default defineComponent({
   },
   methods: {
     getDataFromParentComp(): void {
-      this.borrowerName_value = this.borrowerName;
-      this.borrowerAddr_value = this.borrowerAddr;
-      this.borrowerNum_value = this.borrowerNum;
+      this.ruleForm.name = this.borrowerName;
+      this.ruleForm.address = this.borrowerAddr;
+      this.ruleForm.number = this.borrowerNum;
     },
     // update new data into database
     updateData(): void {
       // parsing data from parent comp to child comp
       this.input.borrowerID = this.borrowerID;
-      this.input.borrowerName = this.borrowerName_value;
-      this.input.borrowerAddr = this.borrowerAddr_value;
-      this.input.borrowerNum = this.borrowerNum_value;
+      this.input.borrowerName = this.ruleForm.name;
+      this.input.borrowerAddr = this.ruleForm.address;
+      this.input.borrowerNum = this.ruleForm.number;
 
       // parsing data into Json format
       const body = JSON.stringify(this.input);

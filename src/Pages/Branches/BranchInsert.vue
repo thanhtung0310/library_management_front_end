@@ -1,30 +1,30 @@
 <template>
   <div class="insert-box">
-    <el-form ref="ruleFormRef" :model="input" :rules="rules">
+    <el-form ref="ruleFormRef" :rules="rules">
       <div class="box-header">
         <p>{{ $t("message.create_message", { table: "branch" }) }}</p>
       </div>
 
       <el-form-item prop="name">
-        <label>{{ $t("branches.branch_name") }}: </label>
+        <template #label>{{ $t("branches.branch_name") }}: </template>
         <el-input
-          v-model="input.branchName"
+          v-model="ruleForm.name"
           type="text"
           placeholder="Please enter branch name..."
         />
       </el-form-item>
 
-      <el-form-item prop="addr">
-        <label>{{ $t("branches.branch_address") }}: </label>
+      <el-form-item prop="address">
+        <template #label>{{ $t("branches.branch_address") }}: </template>
         <el-input
-          v-model="input.branchAddr"
+          v-model="ruleForm.address"
           type="textarea"
           placeholder="Please enter branch address..."
         />
       </el-form-item>
 
       <el-form-item class="button-group">
-        <el-button type="success" @click="updateData()" round>
+        <el-button type="success" @click="createData(ruleFormRef)" round>
           {{ $t("message.create_header") }}
         </el-button>
         <el-button type="info" @click="clearData()" round>{{
@@ -50,6 +50,10 @@ export default defineComponent({
         branchName: ref(""),
         branchAddr: ref(""),
       },
+      ruleForm: reactive({
+        name: "",
+        address: "",
+      }),
       rules: reactive<FormRules>({
         name: [
           {
@@ -64,7 +68,7 @@ export default defineComponent({
             trigger: "blur",
           },
         ],
-        addr: [
+        address: [
           {
             required: true,
             message: "Please input branch address",
@@ -88,7 +92,20 @@ export default defineComponent({
   },
   methods: {
     // create new branch in database
-    createData(): void {
+    createData(formEl: FormInstance | undefined): void {
+      //
+      this.input.branchName = this.ruleForm.name;
+      this.input.branchAddr = this.ruleForm.address;
+      // input validation
+      if (!formEl) return;
+      formEl.validate((valid, fields) => {
+        if (!valid) {
+          // open error notification
+          requestMessage("error", "Insert", "confirm");
+          console.log("submits!", fields);
+          return;
+        }
+      });
       // call axios post callback
       axios
         .post(this.baseURL, this.input)
@@ -122,7 +139,6 @@ export default defineComponent({
           console.log("error submit!", fields);
           return;
         }
-        this.createData();
       });
     },
   },

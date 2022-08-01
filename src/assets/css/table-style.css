@@ -8,6 +8,9 @@
 
 .table-view {
   margin-top: 20px;
+  display: flex;
+  justify-content: center;
+
 }
 
 div#update-div, div#insert-div {
